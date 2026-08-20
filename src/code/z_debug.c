@@ -10,6 +10,7 @@
 #include "rumble.h"
 #include "ultra64.h"
 #include "debug.h"
+#include "save.h"
 
 typedef struct DebugCamTextBufferEntry {
     /* 0x0 */ u8 x;
@@ -288,6 +289,32 @@ void Regs_DrawEditor(GfxPrint* printer) {
 }
 #endif
 
+static void Debug_RupeesToRoman(s32 value, char* buffer) {
+    static const s32 values[] = { 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1 };
+    static const char* symbols[] = { "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I" };
+    char* output = buffer;
+    s32 i;
+
+    if (value == 0) {
+        // *output++ = 'N';
+        *output = '\0';
+        return;
+    }
+
+    for (i = 0; i < ARRAY_COUNT(values); i++) {
+        while (value >= values[i]) {
+            const char* symbol = symbols[i];
+
+            while (*symbol != '\0') {
+                *output++ = *symbol++;
+            }
+            value -= values[i];
+        }
+    }
+
+    *output = '\0';
+}
+
 /**
  * Draws the Reg Editor and Debug Camera text on screen
  */
@@ -314,7 +341,17 @@ void Debug_DrawText(GraphicsContext* gfxCtx) {
         Regs_DrawEditor(&printer);
     }
 #endif
+// Draw rupee count with GfxPrint
+         GfxPrint_SetColor(&printer, 255, 255, 255, 255);
+         GfxPrint_SetPos(&printer, 1, 1);
+         GfxPrint_Printf(&printer, "Arabic: %d", gSaveContext.save.info.playerData.rupees);
+         {
+             char romanRupees[16];
 
+             Debug_RupeesToRoman(gSaveContext.save.info.playerData.rupees, romanRupees);
+             GfxPrint_SetPos(&printer, 1, 2);
+             GfxPrint_Printf(&printer, "Roman: %s", romanRupees);
+         }
     sDebugCamTextEntryCount = 0;
 
     gfx = GfxPrint_Close(&printer);

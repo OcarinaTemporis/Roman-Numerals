@@ -3313,6 +3313,7 @@ void Interface_Draw(PlayState* play) {
             interfaceCtx->counterDigits[2] -= 10;
         }
 
+
         svar2 = rupeeDigitsFirst[CUR_UPG_VALUE(UPG_WALLET)];
         svar4 = rupeeDigitsCount[CUR_UPG_VALUE(UPG_WALLET)];
 
