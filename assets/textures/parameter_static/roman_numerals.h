@@ -25,5 +25,16 @@ extern u64 gRupeeRomanDTex[TEX_LEN(u64, gRupeeRomanDTex_WIDTH, gRupeeRomanDTex_H
 #define gRupeeRomanMTex_WIDTH 8
 #define gRupeeRomanMTex_HEIGHT 16
 extern u64 gRupeeRomanMTex[TEX_LEN(u64, gRupeeRomanMTex_WIDTH, gRupeeRomanMTex_HEIGHT, 8)];
-
+#define gAmmodigitI_WIDTH 8
+#define gAmmodigitI_HEIGHT 8
+extern u64 gAmmodigitI[TEX_LEN(u64, gAmmodigitI_WIDTH, gAmmodigitI_HEIGHT, 8)];
+#define gAmmodigitV_WIDTH 8
+#define gAmmodigitV_HEIGHT 8
+extern u64 gAmmodigitV[TEX_LEN(u64, gAmmodigitV_WIDTH, gAmmodigitV_HEIGHT, 8)];
+#define gAmmodigitX_WIDTH 8
+#define gAmmodigitX_HEIGHT 8
+extern u64 gAmmodigitX[TEX_LEN(u64, gAmmodigitX_WIDTH, gAmmodigitX_HEIGHT, 8)];
+#define gAmmodigitL_WIDTH 8
+#define gAmmodigitL_HEIGHT 8
+extern u64 gAmmodigitL[TEX_LEN(u64, gAmmodigitL_WIDTH, gAmmodigitL_HEIGHT, 8)];
 #endif
