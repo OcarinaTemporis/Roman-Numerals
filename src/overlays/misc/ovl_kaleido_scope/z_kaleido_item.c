@@ -1,4 +1,5 @@
 #include "z_kaleido_scope.h"
+#include "array_count.h"
 #include "roman_numerals.h"
 
 #include "libu64/pad.h"
