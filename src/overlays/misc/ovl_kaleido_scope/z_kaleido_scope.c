@@ -2901,6 +2901,7 @@ void KaleidoScope_SetVertices(PlayState* play, GraphicsContext* gfxCtx) {
     s16 i;
     s16 j;
     s16 k;
+    s16 l;
 
     pauseCtx->pagesYOrigin1 = 0;
 
@@ -3104,58 +3105,44 @@ void KaleidoScope_SetVertices(PlayState* play, GraphicsContext* gfxCtx) {
     for (i = ITEM_QUAD_AMMO_FIRST * 4, j = 0; j < 7; j++) {
         k = sItemVtxQuadsWithAmmo[j];
 
-        // tens
+        for (l = 0; l < ITEM_AMMO_GLYPH_QUAD_COUNT; l++) {
+            pauseCtx->itemVtx[i + (l * 4) + 0].v.ob[0] = pauseCtx->itemVtx[i + (l * 4) + 2].v.ob[0] =
+                pauseCtx->itemVtx[k].v.ob[0] + (l * ITEM_AMMO_GLYPH_QUAD_ADVANCE);
 
-        pauseCtx->itemVtx[i + 0].v.ob[0] = pauseCtx->itemVtx[i + 2].v.ob[0] =
-            pauseCtx->itemVtx[k].v.ob[0] + ITEM_AMMO_TENS_QUAD_OFFSET_X;
+            pauseCtx->itemVtx[i + (l * 4) + 1].v.ob[0] = pauseCtx->itemVtx[i + (l * 4) + 3].v.ob[0] =
+                pauseCtx->itemVtx[i + (l * 4) + 0].v.ob[0] + ITEM_AMMO_DIGIT_QUAD_WIDTH;
 
-        pauseCtx->itemVtx[i + 1].v.ob[0] = pauseCtx->itemVtx[i + 3].v.ob[0] =
-            pauseCtx->itemVtx[i + 0].v.ob[0] + ITEM_AMMO_DIGIT_QUAD_WIDTH;
+            pauseCtx->itemVtx[i + (l * 4) + 0].v.ob[1] = pauseCtx->itemVtx[i + (l * 4) + 1].v.ob[1] =
+                pauseCtx->itemVtx[k].v.ob[1] - ITEM_AMMO_GLYPH_QUAD_OFFSET_Y;
 
-        pauseCtx->itemVtx[i + 0].v.ob[1] = pauseCtx->itemVtx[i + 1].v.ob[1] =
-            pauseCtx->itemVtx[k].v.ob[1] - ITEM_AMMO_TENS_QUAD_OFFSET_Y;
+            pauseCtx->itemVtx[i + (l * 4) + 2].v.ob[1] = pauseCtx->itemVtx[i + (l * 4) + 3].v.ob[1] =
+                pauseCtx->itemVtx[i + (l * 4) + 0].v.ob[1] - ITEM_AMMO_DIGIT_QUAD_HEIGHT;
 
-        pauseCtx->itemVtx[i + 2].v.ob[1] = pauseCtx->itemVtx[i + 3].v.ob[1] =
-            pauseCtx->itemVtx[i + 0].v.ob[1] - ITEM_AMMO_DIGIT_QUAD_HEIGHT;
+            pauseCtx->itemVtx[i + (l * 4) + 0].v.ob[2] = pauseCtx->itemVtx[i + (l * 4) + 1].v.ob[2] =
+                pauseCtx->itemVtx[i + (l * 4) + 2].v.ob[2] = pauseCtx->itemVtx[i + (l * 4) + 3].v.ob[2] = 0;
 
-        // ones
+            pauseCtx->itemVtx[i + (l * 4) + 0].v.flag = pauseCtx->itemVtx[i + (l * 4) + 1].v.flag =
+                pauseCtx->itemVtx[i + (l * 4) + 2].v.flag = pauseCtx->itemVtx[i + (l * 4) + 3].v.flag = 0;
 
-        pauseCtx->itemVtx[i + 4].v.ob[0] = pauseCtx->itemVtx[i + 6].v.ob[0] =
-            pauseCtx->itemVtx[i + 0].v.ob[0] + ITEM_AMMO_ONES_QUAD_OFFSET_X;
+            pauseCtx->itemVtx[i + (l * 4) + 0].v.tc[0] = pauseCtx->itemVtx[i + (l * 4) + 0].v.tc[1] =
+                pauseCtx->itemVtx[i + (l * 4) + 1].v.tc[1] = pauseCtx->itemVtx[i + (l * 4) + 2].v.tc[0] = 0;
 
-        pauseCtx->itemVtx[i + 5].v.ob[0] = pauseCtx->itemVtx[i + 7].v.ob[0] =
-            pauseCtx->itemVtx[i + 4].v.ob[0] + ITEM_AMMO_DIGIT_QUAD_WIDTH;
+            pauseCtx->itemVtx[i + (l * 4) + 1].v.tc[0] = pauseCtx->itemVtx[i + (l * 4) + 2].v.tc[1] =
+                pauseCtx->itemVtx[i + (l * 4) + 3].v.tc[0] = pauseCtx->itemVtx[i + (l * 4) + 3].v.tc[1] =
+                    ITEM_AMMO_DIGIT_QUAD_TEX_SIZE * (1 << 5);
 
-        pauseCtx->itemVtx[i + 4].v.ob[1] = pauseCtx->itemVtx[i + 5].v.ob[1] =
-            pauseCtx->itemVtx[i + 0].v.ob[1] - ITEM_AMMO_ONES_QUAD_OFFSET_Y;
+            pauseCtx->itemVtx[i + (l * 4) + 0].v.cn[0] = pauseCtx->itemVtx[i + (l * 4) + 1].v.cn[0] =
+                pauseCtx->itemVtx[i + (l * 4) + 2].v.cn[0] = pauseCtx->itemVtx[i + (l * 4) + 3].v.cn[0] =
+                    pauseCtx->itemVtx[i + (l * 4) + 0].v.cn[1] = pauseCtx->itemVtx[i + (l * 4) + 1].v.cn[1] =
+                        pauseCtx->itemVtx[i + (l * 4) + 2].v.cn[1] = pauseCtx->itemVtx[i + (l * 4) + 3].v.cn[1] =
+                            pauseCtx->itemVtx[i + (l * 4) + 0].v.cn[2] = pauseCtx->itemVtx[i + (l * 4) + 1].v.cn[2] =
+                                pauseCtx->itemVtx[i + (l * 4) + 2].v.cn[2] = pauseCtx->itemVtx[i + (l * 4) + 3].v.cn[2] = 255;
 
-        pauseCtx->itemVtx[i + 6].v.ob[1] = pauseCtx->itemVtx[i + 7].v.ob[1] =
-            pauseCtx->itemVtx[i + 4].v.ob[1] - ITEM_AMMO_DIGIT_QUAD_HEIGHT;
-
-        // tens, ones
-
-        for (k = 0; k < 2; k++, i += 4) {
-            pauseCtx->itemVtx[i + 0].v.ob[2] = pauseCtx->itemVtx[i + 1].v.ob[2] = pauseCtx->itemVtx[i + 2].v.ob[2] =
-                pauseCtx->itemVtx[i + 3].v.ob[2] = 0;
-
-            pauseCtx->itemVtx[i + 0].v.flag = pauseCtx->itemVtx[i + 1].v.flag = pauseCtx->itemVtx[i + 2].v.flag =
-                pauseCtx->itemVtx[i + 3].v.flag = 0;
-
-            pauseCtx->itemVtx[i + 0].v.tc[0] = pauseCtx->itemVtx[i + 0].v.tc[1] = pauseCtx->itemVtx[i + 1].v.tc[1] =
-                pauseCtx->itemVtx[i + 2].v.tc[0] = 0;
-
-            pauseCtx->itemVtx[i + 1].v.tc[0] = pauseCtx->itemVtx[i + 2].v.tc[1] = pauseCtx->itemVtx[i + 3].v.tc[0] =
-                pauseCtx->itemVtx[i + 3].v.tc[1] = ITEM_AMMO_DIGIT_QUAD_TEX_SIZE * (1 << 5);
-
-            pauseCtx->itemVtx[i + 0].v.cn[0] = pauseCtx->itemVtx[i + 1].v.cn[0] = pauseCtx->itemVtx[i + 2].v.cn[0] =
-                pauseCtx->itemVtx[i + 3].v.cn[0] = pauseCtx->itemVtx[i + 0].v.cn[1] = pauseCtx->itemVtx[i + 1].v.cn[1] =
-                    pauseCtx->itemVtx[i + 2].v.cn[1] = pauseCtx->itemVtx[i + 3].v.cn[1] =
-                        pauseCtx->itemVtx[i + 0].v.cn[2] = pauseCtx->itemVtx[i + 1].v.cn[2] =
-                            pauseCtx->itemVtx[i + 2].v.cn[2] = pauseCtx->itemVtx[i + 3].v.cn[2] = 255;
-
-            pauseCtx->itemVtx[i + 0].v.cn[3] = pauseCtx->itemVtx[i + 1].v.cn[3] = pauseCtx->itemVtx[i + 2].v.cn[3] =
-                pauseCtx->itemVtx[i + 3].v.cn[3] = pauseCtx->alpha;
+            pauseCtx->itemVtx[i + (l * 4) + 0].v.cn[3] = pauseCtx->itemVtx[i + (l * 4) + 1].v.cn[3] =
+                pauseCtx->itemVtx[i + (l * 4) + 2].v.cn[3] = pauseCtx->itemVtx[i + (l * 4) + 3].v.cn[3] = pauseCtx->alpha;
         }
+
+        i += ITEM_AMMO_GLYPH_QUAD_COUNT * 4;
     }
 
     pauseCtx->equipVtx = GRAPH_ALLOC(gfxCtx, (EQUIP_QUAD_MAX * 4) * sizeof(Vtx));
