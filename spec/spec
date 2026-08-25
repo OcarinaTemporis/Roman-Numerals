@@ -949,6 +949,7 @@ beginseg
     compress
     romalign 0x1000
     include "$(BUILD_DIR)/assets/textures/parameter_static/parameter_static.o"
+    include "$(BUILD_DIR)/assets/textures/parameter_static/roman_numerals.o"
     number 2
 endseg
 

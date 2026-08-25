@@ -26,6 +26,7 @@
 #include "save.h"
 
 #include "assets/textures/parameter_static/parameter_static.h"
+#include "assets/textures/parameter_static/roman_numerals.h"
 #include "assets/textures/do_action_static/do_action_static.h"
 #include "assets/textures/icon_item_static/icon_item_static.h"
 
@@ -3176,6 +3177,121 @@ void func_8008A994(InterfaceContext* interfaceCtx) {
     View_ApplyOrthoToOverlay(&interfaceCtx->view);
 }
 
+#ifndef PARAMETER_STATIC_ROMAN_NUMERALS_H
+#define PARAMETER_STATIC_ROMAN_NUMERALS_H
+
+#include "tex_len.h"
+#include "ultra64.h"
+
+#define gRupeeRomanITex_WIDTH 8
+#define gRupeeRomanITex_HEIGHT 16
+extern u64 gRupeeRomanITex[TEX_LEN(u64, gRupeeRomanITex_WIDTH, gRupeeRomanITex_HEIGHT, 8)];
+#define gRupeeRomanVTex_WIDTH 8
+#define gRupeeRomanVTex_HEIGHT 16
+extern u64 gRupeeRomanVTex[TEX_LEN(u64, gRupeeRomanVTex_WIDTH, gRupeeRomanVTex_HEIGHT, 8)];
+#define gRupeeRomanXTex_WIDTH 8
+#define gRupeeRomanXTex_HEIGHT 16
+extern u64 gRupeeRomanXTex[TEX_LEN(u64, gRupeeRomanXTex_WIDTH, gRupeeRomanXTex_HEIGHT, 8)];
+#define gRupeeRomanLTex_WIDTH 8
+#define gRupeeRomanLTex_HEIGHT 16
+extern u64 gRupeeRomanLTex[TEX_LEN(u64, gRupeeRomanLTex_WIDTH, gRupeeRomanLTex_HEIGHT, 8)];
+#define gRupeeRomanCTex_WIDTH 16
+#define gRupeeRomanCTex_HEIGHT 16
+extern u64 gRupeeRomanCTex[TEX_LEN(u64, gRupeeRomanCTex_WIDTH, gRupeeRomanCTex_HEIGHT, 8)];
+#define gRupeeRomanDTex_WIDTH 8
+#define gRupeeRomanDTex_HEIGHT 16
+extern u64 gRupeeRomanDTex[TEX_LEN(u64, gRupeeRomanDTex_WIDTH, gRupeeRomanDTex_HEIGHT, 8)];
+#define gRupeeRomanMTex_WIDTH 8
+#define gRupeeRomanMTex_HEIGHT 16
+extern u64 gRupeeRomanMTex[TEX_LEN(u64, gRupeeRomanMTex_WIDTH, gRupeeRomanMTex_HEIGHT, 8)];
+
+#endif
+typedef enum RupeeRomanGlyph {
+    RUPEE_ROMAN_GLYPH_I,
+    RUPEE_ROMAN_GLYPH_V,
+    RUPEE_ROMAN_GLYPH_X,
+    RUPEE_ROMAN_GLYPH_L,
+    RUPEE_ROMAN_GLYPH_C,
+    RUPEE_ROMAN_GLYPH_D,
+    RUPEE_ROMAN_GLYPH_M,
+    RUPEE_ROMAN_GLYPH_MAX
+} RupeeRomanGlyph;
+
+typedef struct RupeeRomanToken {
+    /* 0x00 */ s16 value;
+    /* 0x02 */ u8 firstGlyph;
+    /* 0x03 */ u8 secondGlyph;
+} RupeeRomanToken; // size = 0x4
+
+#define RUPEE_ROMAN_GLYPH_NONE 0xFF
+#define RUPEE_ROMAN_MAX_GLYPHS 16
+
+static void* sRupeeRomanGlyphTextures[RUPEE_ROMAN_GLYPH_MAX] = {
+    gRupeeRomanITex, gRupeeRomanVTex, gRupeeRomanXTex, gRupeeRomanLTex,
+    gRupeeRomanCTex, gRupeeRomanDTex, gRupeeRomanMTex,
+};
+
+static s16 sRupeeRomanGlyphAdvances[RUPEE_ROMAN_GLYPH_MAX] = { 5, 10, 9, 8, 12, 11, 8 };
+// This function sets the distance for the next glyph based on each character.
+static s16 sRupeeRomanGlyphWidths[RUPEE_ROMAN_GLYPH_MAX] = {
+    8,  // I
+    12, // V
+    12, // X
+    8,  // L
+    12, // C
+    12, // D
+    8,  // M
+};
+static s16 sRupeeRomanGlyphTextureWidths[RUPEE_ROMAN_GLYPH_MAX] = {
+    8,  // I
+    16, // V
+    16, // X
+    8,  // L
+    16, // C
+    16, // D
+    8,  // M
+};
+static s32 Interface_FormatRupeesRoman(s16 rupees, u8* glyphs, s32 glyphCapacity) {
+    static RupeeRomanToken sTokens[] = {
+        { 1000, RUPEE_ROMAN_GLYPH_M, RUPEE_ROMAN_GLYPH_NONE }, { 900, RUPEE_ROMAN_GLYPH_C, RUPEE_ROMAN_GLYPH_M },
+        { 500, RUPEE_ROMAN_GLYPH_D, RUPEE_ROMAN_GLYPH_NONE },  { 400, RUPEE_ROMAN_GLYPH_C, RUPEE_ROMAN_GLYPH_D },
+        { 100, RUPEE_ROMAN_GLYPH_C, RUPEE_ROMAN_GLYPH_NONE },  { 90, RUPEE_ROMAN_GLYPH_X, RUPEE_ROMAN_GLYPH_C },
+        { 50, RUPEE_ROMAN_GLYPH_L, RUPEE_ROMAN_GLYPH_NONE },   { 40, RUPEE_ROMAN_GLYPH_X, RUPEE_ROMAN_GLYPH_L },
+        { 10, RUPEE_ROMAN_GLYPH_X, RUPEE_ROMAN_GLYPH_NONE },   { 9, RUPEE_ROMAN_GLYPH_I, RUPEE_ROMAN_GLYPH_X },
+        { 5, RUPEE_ROMAN_GLYPH_V, RUPEE_ROMAN_GLYPH_NONE },    { 4, RUPEE_ROMAN_GLYPH_I, RUPEE_ROMAN_GLYPH_V },
+        { 1, RUPEE_ROMAN_GLYPH_I, RUPEE_ROMAN_GLYPH_NONE },
+    };
+    s32 glyphCount = 0;
+    s32 tokenIndex;
+    s32 tokenGlyphCount;
+
+    if (glyphCapacity <= 0) {
+        return 0;
+    }
+
+    if (rupees <= 0) {
+        return 0;
+    }
+
+    for (tokenIndex = 0; tokenIndex < ARRAY_COUNT(sTokens); tokenIndex++) {
+        tokenGlyphCount = sTokens[tokenIndex].secondGlyph == RUPEE_ROMAN_GLYPH_NONE ? 1 : 2;
+
+        while (rupees >= sTokens[tokenIndex].value) {
+            if ((glyphCount + tokenGlyphCount) > glyphCapacity) {
+                return glyphCount;
+            }
+
+            glyphs[glyphCount++] = sTokens[tokenIndex].firstGlyph;
+            if (tokenGlyphCount == 2) {
+                glyphs[glyphCount++] = sTokens[tokenIndex].secondGlyph;
+            }
+            rupees -= sTokens[tokenIndex].value;
+        }
+    }
+
+    return glyphCount;
+}
+
 void Interface_Draw(PlayState* play) {
     static s16 magicArrowEffectsR[] = { 255, 100, 255 };
     static s16 magicArrowEffectsG[] = { 0, 100, 255 };
@@ -3186,8 +3302,6 @@ void Interface_Draw(PlayState* play) {
     static s16 D_80125B1C[][3] = {
         { 0, 150, 0 }, { 100, 255, 0 }, { 255, 255, 255 }, { 0, 0, 0 }, { 255, 255, 255 },
     };
-    static s16 rupeeDigitsFirst[] = { 1, 0, 0 };
-    static s16 rupeeDigitsCount[] = { 2, 3, 3 };
     static s16 spoilingItemEntrances[] = { ENTR_LOST_WOODS_2, ENTR_ZORAS_DOMAIN_3, ENTR_ZORAS_DOMAIN_3 };
     static f32 D_80125B54[] = { -40.0f, -35.0f }; // unused
     static s16 D_80125B5C[] = { 91, 91 };         // unused
@@ -3200,10 +3314,11 @@ void Interface_Draw(PlayState* play) {
     PauseContext* pauseCtx = &play->pauseCtx;
     MessageContext* msgCtx = &play->msgCtx;
     Player* player = GET_PLAYER(play);
+    u8 rupeeRomanGlyphs[RUPEE_ROMAN_MAX_GLYPHS];
+    s16 rupeeRomanGlyphCount;
     s16 svar1;
     s16 svar2;
     s16 svar3;
-    s16 svar4;
     s16 svar5;
     s16 timerId;
 
@@ -3296,31 +3411,16 @@ void Interface_Draw(PlayState* play) {
         gDPSetCombineLERP(OVERLAY_DISP++, 0, 0, 0, PRIMITIVE, TEXEL0, 0, PRIMITIVE, 0, 0, 0, 0, PRIMITIVE, TEXEL0, 0,
                           PRIMITIVE, 0);
 
-        interfaceCtx->counterDigits[0] = interfaceCtx->counterDigits[1] = 0;
-        interfaceCtx->counterDigits[2] = gSaveContext.save.info.playerData.rupees;
+        rupeeRomanGlyphCount = Interface_FormatRupeesRoman(gSaveContext.save.info.playerData.rupees, rupeeRomanGlyphs,
+                                                           ARRAY_COUNT(rupeeRomanGlyphs));
 
-        if ((interfaceCtx->counterDigits[2] > 9999) || (interfaceCtx->counterDigits[2] < 0)) {
-            interfaceCtx->counterDigits[2] &= 0xDDD;
-        }
-
-        while (interfaceCtx->counterDigits[2] >= 100) {
-            interfaceCtx->counterDigits[0]++;
-            interfaceCtx->counterDigits[2] -= 100;
-        }
-
-        while (interfaceCtx->counterDigits[2] >= 10) {
-            interfaceCtx->counterDigits[1]++;
-            interfaceCtx->counterDigits[2] -= 10;
-        }
-
-
-        svar2 = rupeeDigitsFirst[CUR_UPG_VALUE(UPG_WALLET)];
-        svar4 = rupeeDigitsCount[CUR_UPG_VALUE(UPG_WALLET)];
-
-        for (svar1 = 0, svar3 = 42; svar1 < svar4; svar1++, svar2++, svar3 += 8) {
-            OVERLAY_DISP =
-                Gfx_TextureI8(OVERLAY_DISP, ((u8*)gCounterDigit0Tex + (8 * 16 * interfaceCtx->counterDigits[svar2])), 8,
-                              16, svar3, 206, 8, 16, 1 << 10, 1 << 10);
+        for (svar1 = 0, svar3 = 42; svar1 < rupeeRomanGlyphCount; svar1++) {
+            RupeeRomanGlyph glyph = rupeeRomanGlyphs[svar1];
+            s16 glyphWidth = sRupeeRomanGlyphWidths[glyph];
+            s16 glyphTextureWidth = sRupeeRomanGlyphTextureWidths[glyph];
+            OVERLAY_DISP = Gfx_TextureI8(OVERLAY_DISP, sRupeeRomanGlyphTextures[glyph], glyphTextureWidth, 16, svar3,
+                                         206, glyphWidth, 16, 1 << 10, 1 << 10);
+            svar3 += sRupeeRomanGlyphAdvances[glyph];
         }
 
         Magic_DrawMeter(play);
