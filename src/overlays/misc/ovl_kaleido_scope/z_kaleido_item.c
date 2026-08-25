@@ -1,4 +1,5 @@
 #include "z_kaleido_scope.h"
+#include "roman_numerals.h"
 
 #include "libu64/pad.h"
 #include "controller.h"
@@ -14,62 +15,9 @@
 #include "assets/textures/parameter_static/parameter_static.h"
 #include "assets/textures/parameter_static/roman_numerals.h"
 
-typedef enum KaleidoAmmoRomanGlyph {
-    KALEIDO_AMMO_ROMAN_GLYPH_I,
-    KALEIDO_AMMO_ROMAN_GLYPH_V,
-    KALEIDO_AMMO_ROMAN_GLYPH_X,
-    KALEIDO_AMMO_ROMAN_GLYPH_L,
-} KaleidoAmmoRomanGlyph;
-
-typedef struct KaleidoAmmoRomanToken {
-    s16 value;
-    u8 firstGlyph;
-    u8 secondGlyph;
-} KaleidoAmmoRomanToken;
-
-#define KALEIDO_AMMO_ROMAN_GLYPH_NONE 0xFF
-#define KALEIDO_AMMO_ROMAN_MAX_GLYPHS 8
-
 static void* sKaleidoAmmoRomanGlyphTextures[] = {
     gAmmodigitI, gAmmodigitV, gAmmodigitX, gAmmodigitL,
 };
-
-static s32 KaleidoScope_FormatAmmoRoman(s16 ammo, u8* glyphs, s32 glyphCapacity) {
-    static KaleidoAmmoRomanToken sTokens[] = {
-        { 50, KALEIDO_AMMO_ROMAN_GLYPH_L, KALEIDO_AMMO_ROMAN_GLYPH_NONE },
-        { 40, KALEIDO_AMMO_ROMAN_GLYPH_X, KALEIDO_AMMO_ROMAN_GLYPH_L },
-        { 10, KALEIDO_AMMO_ROMAN_GLYPH_X, KALEIDO_AMMO_ROMAN_GLYPH_NONE },
-        { 9, KALEIDO_AMMO_ROMAN_GLYPH_I, KALEIDO_AMMO_ROMAN_GLYPH_X },
-        { 5, KALEIDO_AMMO_ROMAN_GLYPH_V, KALEIDO_AMMO_ROMAN_GLYPH_NONE },
-        { 4, KALEIDO_AMMO_ROMAN_GLYPH_I, KALEIDO_AMMO_ROMAN_GLYPH_V },
-        { 1, KALEIDO_AMMO_ROMAN_GLYPH_I, KALEIDO_AMMO_ROMAN_GLYPH_NONE },
-    };
-    s32 glyphCount = 0;
-    s32 tokenIndex;
-    s32 tokenGlyphCount;
-
-    if ((glyphCapacity <= 0) || (ammo <= 0) || (ammo > 50)) {
-        return 0;
-    }
-
-    for (tokenIndex = 0; tokenIndex < ARRAY_COUNT(sTokens); tokenIndex++) {
-        tokenGlyphCount = sTokens[tokenIndex].secondGlyph == KALEIDO_AMMO_ROMAN_GLYPH_NONE ? 1 : 2;
-
-        while (ammo >= sTokens[tokenIndex].value) {
-            if ((glyphCount + tokenGlyphCount) > glyphCapacity) {
-                return glyphCount;
-            }
-
-            glyphs[glyphCount++] = sTokens[tokenIndex].firstGlyph;
-            if (tokenGlyphCount == 2) {
-                glyphs[glyphCount++] = sTokens[tokenIndex].secondGlyph;
-            }
-            ammo -= sTokens[tokenIndex].value;
-        }
-    }
-
-    return glyphCount;
-}
 
 u8 gAmmoItems[] = {
     ITEM_DEKU_STICK, // SLOT_DEKU_STICK
@@ -116,7 +64,7 @@ static s16 sAmmoVtxOffset[] = {
 
 void KaleidoScope_DrawAmmoCount(PauseContext* pauseCtx, GraphicsContext* gfxCtx, s16 item) {
     s16 ammo;
-    u8 ammoRomanGlyphs[KALEIDO_AMMO_ROMAN_MAX_GLYPHS];
+    u8 ammoRomanGlyphs[ROMAN_NUMERAL_MAX_GLYPHS];
     s16 ammoRomanGlyphCount;
     s16 glyphIndex;
 
@@ -143,7 +91,7 @@ void KaleidoScope_DrawAmmoCount(PauseContext* pauseCtx, GraphicsContext* gfxCtx,
         }
     }
 
-    ammoRomanGlyphCount = KaleidoScope_FormatAmmoRoman(ammo, ammoRomanGlyphs, ARRAY_COUNT(ammoRomanGlyphs));
+    ammoRomanGlyphCount = (ammo <= 50) ? RomanNumerals_Format(ammo, ammoRomanGlyphs, ARRAY_COUNT(ammoRomanGlyphs)) : 0;
 
     gDPPipeSync(POLY_OPA_DISP++);
 

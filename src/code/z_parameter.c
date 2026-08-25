@@ -24,6 +24,7 @@
 #include "play_state.h"
 #include "player.h"
 #include "save.h"
+#include "roman_numerals.h"
 
 #include "assets/textures/parameter_static/parameter_static.h"
 #include "assets/textures/parameter_static/roman_numerals.h"
@@ -2999,8 +3000,6 @@ static void* sAmmoRomanGlyphTextures[] = {
     gAmmodigitI, gAmmodigitV, gAmmodigitX, gAmmodigitL,
 };
 
-static s32 Interface_FormatAmmoRoman(s16 ammo, u8* glyphs, s32 glyphCapacity);
-
 void Interface_DrawAmmoCount(PlayState* play, s16 button, s16 alpha) {
     s16 i;
     s16 ammo;
@@ -3046,7 +3045,7 @@ void Interface_DrawAmmoCount(PlayState* play, s16 button, s16 alpha) {
             gDPSetPrimColor(OVERLAY_DISP++, 0, 0, 100, 100, 100, alpha);
         }
 
-        ammoRomanGlyphCount = Interface_FormatAmmoRoman(ammo, ammoRomanGlyphs, ARRAY_COUNT(ammoRomanGlyphs));
+        ammoRomanGlyphCount = (ammo <= 50) ? RomanNumerals_Format(ammo, ammoRomanGlyphs, ARRAY_COUNT(ammoRomanGlyphs)) : 0;
 
         for (glyphIndex = 0; glyphIndex < ammoRomanGlyphCount; glyphIndex++) {
             OVERLAY_DISP = Gfx_TextureIA8(
@@ -3213,34 +3212,14 @@ extern u64 gRupeeRomanDTex[TEX_LEN(u64, gRupeeRomanDTex_WIDTH, gRupeeRomanDTex_H
 extern u64 gRupeeRomanMTex[TEX_LEN(u64, gRupeeRomanMTex_WIDTH, gRupeeRomanMTex_HEIGHT, 8)];
 
 #endif
-typedef enum RupeeRomanGlyph {
-    RUPEE_ROMAN_GLYPH_I,
-    RUPEE_ROMAN_GLYPH_V,
-    RUPEE_ROMAN_GLYPH_X,
-    RUPEE_ROMAN_GLYPH_L,
-    RUPEE_ROMAN_GLYPH_C,
-    RUPEE_ROMAN_GLYPH_D,
-    RUPEE_ROMAN_GLYPH_M,
-    RUPEE_ROMAN_GLYPH_MAX
-} RupeeRomanGlyph;
-
-typedef struct RupeeRomanToken {
-    /* 0x00 */ s16 value;
-    /* 0x02 */ u8 firstGlyph;
-    /* 0x03 */ u8 secondGlyph;
-} RupeeRomanToken; // size = 0x4
-
-#define RUPEE_ROMAN_GLYPH_NONE 0xFF
-#define RUPEE_ROMAN_MAX_GLYPHS 16
-
-static void* sRupeeRomanGlyphTextures[RUPEE_ROMAN_GLYPH_MAX] = {
+static void* sRupeeRomanGlyphTextures[ROMAN_NUMERAL_GLYPH_MAX] = {
     gRupeeRomanITex, gRupeeRomanVTex, gRupeeRomanXTex, gRupeeRomanLTex,
     gRupeeRomanCTex, gRupeeRomanDTex, gRupeeRomanMTex,
 };
 
-static s16 sRupeeRomanGlyphAdvances[RUPEE_ROMAN_GLYPH_MAX] = { 5, 10, 9, 8, 12, 11, 8 };
+static s16 sRupeeRomanGlyphAdvances[ROMAN_NUMERAL_GLYPH_MAX] = { 5, 10, 9, 8, 12, 11, 8 };
 // This function sets the distance for the next glyph based on each character.
-static s16 sRupeeRomanGlyphWidths[RUPEE_ROMAN_GLYPH_MAX] = {
+static s16 sRupeeRomanGlyphWidths[ROMAN_NUMERAL_GLYPH_MAX] = {
     8,  // I
     12, // V
     12, // X
@@ -3249,7 +3228,7 @@ static s16 sRupeeRomanGlyphWidths[RUPEE_ROMAN_GLYPH_MAX] = {
     12, // D
     8,  // M
 };
-static s16 sRupeeRomanGlyphTextureWidths[RUPEE_ROMAN_GLYPH_MAX] = {
+static s16 sRupeeRomanGlyphTextureWidths[ROMAN_NUMERAL_GLYPH_MAX] = {
     8,  // I
     16, // V
     16, // X
@@ -3258,97 +3237,6 @@ static s16 sRupeeRomanGlyphTextureWidths[RUPEE_ROMAN_GLYPH_MAX] = {
     16, // D
     8,  // M
 };
-static s32 Interface_FormatRupeesRoman(s16 rupees, u8* glyphs, s32 glyphCapacity) {
-    static RupeeRomanToken sTokens[] = {
-        { 1000, RUPEE_ROMAN_GLYPH_M, RUPEE_ROMAN_GLYPH_NONE }, { 900, RUPEE_ROMAN_GLYPH_C, RUPEE_ROMAN_GLYPH_M },
-        { 500, RUPEE_ROMAN_GLYPH_D, RUPEE_ROMAN_GLYPH_NONE },  { 400, RUPEE_ROMAN_GLYPH_C, RUPEE_ROMAN_GLYPH_D },
-        { 100, RUPEE_ROMAN_GLYPH_C, RUPEE_ROMAN_GLYPH_NONE },  { 90, RUPEE_ROMAN_GLYPH_X, RUPEE_ROMAN_GLYPH_C },
-        { 50, RUPEE_ROMAN_GLYPH_L, RUPEE_ROMAN_GLYPH_NONE },   { 40, RUPEE_ROMAN_GLYPH_X, RUPEE_ROMAN_GLYPH_L },
-        { 10, RUPEE_ROMAN_GLYPH_X, RUPEE_ROMAN_GLYPH_NONE },   { 9, RUPEE_ROMAN_GLYPH_I, RUPEE_ROMAN_GLYPH_X },
-        { 5, RUPEE_ROMAN_GLYPH_V, RUPEE_ROMAN_GLYPH_NONE },    { 4, RUPEE_ROMAN_GLYPH_I, RUPEE_ROMAN_GLYPH_V },
-        { 1, RUPEE_ROMAN_GLYPH_I, RUPEE_ROMAN_GLYPH_NONE },
-    };
-    s32 glyphCount = 0;
-    s32 tokenIndex;
-    s32 tokenGlyphCount;
-
-    if (glyphCapacity <= 0) {
-        return 0;
-    }
-
-    if (rupees <= 0) {
-        return 0;
-    }
-
-    for (tokenIndex = 0; tokenIndex < ARRAY_COUNT(sTokens); tokenIndex++) {
-        tokenGlyphCount = sTokens[tokenIndex].secondGlyph == RUPEE_ROMAN_GLYPH_NONE ? 1 : 2;
-
-        while (rupees >= sTokens[tokenIndex].value) {
-            if ((glyphCount + tokenGlyphCount) > glyphCapacity) {
-                return glyphCount;
-            }
-
-            glyphs[glyphCount++] = sTokens[tokenIndex].firstGlyph;
-            if (tokenGlyphCount == 2) {
-                glyphs[glyphCount++] = sTokens[tokenIndex].secondGlyph;
-            }
-            rupees -= sTokens[tokenIndex].value;
-        }
-    }
-
-    return glyphCount;
-}
-
-typedef enum AmmoRomanGlyph {
-    AMMO_ROMAN_GLYPH_I,
-    AMMO_ROMAN_GLYPH_V,
-    AMMO_ROMAN_GLYPH_X,
-    AMMO_ROMAN_GLYPH_L,
-    AMMO_ROMAN_GLYPH_MAX
-} AmmoRomanGlyph;
-
-typedef struct AmmoRomanToken {
-    /* 0x00 */ s16 value;
-    /* 0x02 */ u8 firstGlyph;
-    /* 0x03 */ u8 secondGlyph;
-} AmmoRomanToken; // size = 0x4
-
-#define AMMO_ROMAN_GLYPH_NONE 0xFF
-
-static s32 Interface_FormatAmmoRoman(s16 ammo, u8* glyphs, s32 glyphCapacity) {
-    static AmmoRomanToken sTokens[] = {
-        { 50, AMMO_ROMAN_GLYPH_L, AMMO_ROMAN_GLYPH_NONE }, { 40, AMMO_ROMAN_GLYPH_X, AMMO_ROMAN_GLYPH_L },
-        { 10, AMMO_ROMAN_GLYPH_X, AMMO_ROMAN_GLYPH_NONE }, { 9, AMMO_ROMAN_GLYPH_I, AMMO_ROMAN_GLYPH_X },
-        { 5, AMMO_ROMAN_GLYPH_V, AMMO_ROMAN_GLYPH_NONE },  { 4, AMMO_ROMAN_GLYPH_I, AMMO_ROMAN_GLYPH_V },
-        { 1, AMMO_ROMAN_GLYPH_I, AMMO_ROMAN_GLYPH_NONE },
-    };
-    s32 glyphCount = 0;
-    s32 tokenIndex;
-    s32 tokenGlyphCount;
-
-    if ((glyphCapacity <= 0) || (ammo <= 0) || (ammo > 50)) {
-        return 0;
-    }
-
-    for (tokenIndex = 0; tokenIndex < ARRAY_COUNT(sTokens); tokenIndex++) {
-        tokenGlyphCount = sTokens[tokenIndex].secondGlyph == AMMO_ROMAN_GLYPH_NONE ? 1 : 2;
-
-        while (ammo >= sTokens[tokenIndex].value) {
-            if ((glyphCount + tokenGlyphCount) > glyphCapacity) {
-                return glyphCount;
-            }
-
-            glyphs[glyphCount++] = sTokens[tokenIndex].firstGlyph;
-            if (tokenGlyphCount == 2) {
-                glyphs[glyphCount++] = sTokens[tokenIndex].secondGlyph;
-            }
-            ammo -= sTokens[tokenIndex].value;
-        }
-    }
-
-    return glyphCount;
-}
-
 void Interface_Draw(PlayState* play) {
     static s16 magicArrowEffectsR[] = { 255, 100, 255 };
     static s16 magicArrowEffectsG[] = { 0, 100, 255 };
@@ -3371,7 +3259,7 @@ void Interface_Draw(PlayState* play) {
     PauseContext* pauseCtx = &play->pauseCtx;
     MessageContext* msgCtx = &play->msgCtx;
     Player* player = GET_PLAYER(play);
-    u8 rupeeRomanGlyphs[RUPEE_ROMAN_MAX_GLYPHS];
+    u8 rupeeRomanGlyphs[ROMAN_NUMERAL_MAX_GLYPHS];
     s16 rupeeRomanGlyphCount;
     s16 svar1;
     s16 svar2;
@@ -3428,11 +3316,11 @@ void Interface_Draw(PlayState* play) {
                                       TEXEL0, 0, PRIMITIVE, 0);
 
                     rupeeRomanGlyphCount =
-                        Interface_FormatRupeesRoman(gSaveContext.save.info.inventory.dungeonKeys[gSaveContext.mapIndex],
+                        RomanNumerals_Format(gSaveContext.save.info.inventory.dungeonKeys[gSaveContext.mapIndex],
                                                     rupeeRomanGlyphs, ARRAY_COUNT(rupeeRomanGlyphs));
 
                     for (svar1 = 0, svar3 = 42; svar1 < rupeeRomanGlyphCount; svar1++) {
-                        RupeeRomanGlyph glyph = rupeeRomanGlyphs[svar1];
+                        RomanNumeralGlyph glyph = rupeeRomanGlyphs[svar1];
                         s16 glyphWidth = sRupeeRomanGlyphWidths[glyph];
                         s16 glyphTextureWidth = sRupeeRomanGlyphTextureWidths[glyph];
                         OVERLAY_DISP = Gfx_TextureI8(OVERLAY_DISP, sRupeeRomanGlyphTextures[glyph], glyphTextureWidth,
@@ -3459,11 +3347,11 @@ void Interface_Draw(PlayState* play) {
         gDPSetCombineLERP(OVERLAY_DISP++, 0, 0, 0, PRIMITIVE, TEXEL0, 0, PRIMITIVE, 0, 0, 0, 0, PRIMITIVE, TEXEL0, 0,
                           PRIMITIVE, 0);
 
-        rupeeRomanGlyphCount = Interface_FormatRupeesRoman(gSaveContext.save.info.playerData.rupees, rupeeRomanGlyphs,
+        rupeeRomanGlyphCount = RomanNumerals_Format(gSaveContext.save.info.playerData.rupees, rupeeRomanGlyphs,
                                                            ARRAY_COUNT(rupeeRomanGlyphs));
 
         for (svar1 = 0, svar3 = 42; svar1 < rupeeRomanGlyphCount; svar1++) {
-            RupeeRomanGlyph glyph = rupeeRomanGlyphs[svar1];
+            RomanNumeralGlyph glyph = rupeeRomanGlyphs[svar1];
             s16 glyphWidth = sRupeeRomanGlyphWidths[glyph];
             s16 glyphTextureWidth = sRupeeRomanGlyphTextureWidths[glyph];
             OVERLAY_DISP = Gfx_TextureI8(OVERLAY_DISP, sRupeeRomanGlyphTextures[glyph], glyphTextureWidth, 16, svar3,
