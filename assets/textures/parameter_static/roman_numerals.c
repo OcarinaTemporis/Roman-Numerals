@@ -29,17 +29,17 @@ u64 gRupeeRomanMTex[TEX_LEN(u64, gRupeeRomanMTex_WIDTH, gRupeeRomanMTex_HEIGHT, 
 };
 
 u64 gAmmodigitI[TEX_LEN(u64, gAmmodigitI_WIDTH, gAmmodigitI_HEIGHT, 8)] = {
-#include "assets/textures/parameter_static/gAmmodigitI.i8.inc.c"
+#include "assets/textures/parameter_static/gAmmodigitI.ia8.inc.c"
 };
 
 u64 gAmmodigitV[TEX_LEN(u64, gAmmodigitV_WIDTH, gAmmodigitV_HEIGHT, 8)] = {
-#include "assets/textures/parameter_static/gAmmodigitV.i8.inc.c"
+#include "assets/textures/parameter_static/gAmmodigitV.ia8.inc.c"
 };
 
 u64 gAmmodigitX[TEX_LEN(u64, gAmmodigitX_WIDTH, gAmmodigitX_HEIGHT, 8)] = {
-#include "assets/textures/parameter_static/gAmmodigitX.i8.inc.c"
+#include "assets/textures/parameter_static/gAmmodigitX.ia8.inc.c"
 };
 
 u64 gAmmodigitL[TEX_LEN(u64, gAmmodigitL_WIDTH, gAmmodigitL_HEIGHT, 8)] = {
-#include "assets/textures/parameter_static/gAmmodigitL.i8.inc.c"
+#include "assets/textures/parameter_static/gAmmodigitL.ia8.inc.c"
 };
