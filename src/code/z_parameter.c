@@ -2992,9 +2992,21 @@ void Interface_DrawItemIconTexture(PlayState* play, void* texture, s16 button) {
     CLOSE_DISPS(play->state.gfxCtx, "../z_parameter.c", 3094);
 }
 
+#define AMMO_ROMAN_MAX_GLYPHS 8
+#define AMMO_ROMAN_GLYPH_ADVANCE 4
+
+static void* sAmmoRomanGlyphTextures[] = {
+    gAmmodigitI, gAmmodigitV, gAmmodigitX, gAmmodigitL,
+};
+
+static s32 Interface_FormatAmmoRoman(s16 ammo, u8* glyphs, s32 glyphCapacity);
+
 void Interface_DrawAmmoCount(PlayState* play, s16 button, s16 alpha) {
     s16 i;
     s16 ammo;
+    u8 ammoRomanGlyphs[AMMO_ROMAN_MAX_GLYPHS];
+    s16 ammoRomanGlyphCount;
+    s16 glyphIndex;
 
     OPEN_DISPS(play->state.gfxCtx, "../z_parameter.c", 3105);
 
@@ -3034,19 +3046,14 @@ void Interface_DrawAmmoCount(PlayState* play, s16 button, s16 alpha) {
             gDPSetPrimColor(OVERLAY_DISP++, 0, 0, 100, 100, 100, alpha);
         }
 
-        i = 0;
-        while (ammo >= 10) {
-            i++;
-            ammo -= 10;
-        }
+        ammoRomanGlyphCount = Interface_FormatAmmoRoman(ammo, ammoRomanGlyphs, ARRAY_COUNT(ammoRomanGlyphs));
 
-        if (i != 0) {
-            OVERLAY_DISP = Gfx_TextureIA8(OVERLAY_DISP, ((u8*)gAmmoDigit0Tex + ((8 * 8) * i)), 8, 8,
-                                          R_ITEM_AMMO_X(button), R_ITEM_AMMO_Y(button), 8, 8, 1 << 10, 1 << 10);
+        for (glyphIndex = 0; glyphIndex < ammoRomanGlyphCount; glyphIndex++) {
+            OVERLAY_DISP = Gfx_TextureIA8(
+                OVERLAY_DISP, sAmmoRomanGlyphTextures[ammoRomanGlyphs[glyphIndex]], 8, 8,
+                R_ITEM_AMMO_X(button) + (glyphIndex * AMMO_ROMAN_GLYPH_ADVANCE), R_ITEM_AMMO_Y(button), 8, 8,
+                1 << 10, 1 << 10);
         }
-
-        OVERLAY_DISP = Gfx_TextureIA8(OVERLAY_DISP, ((u8*)gAmmoDigit0Tex + ((8 * 8) * ammo)), 8, 8,
-                                      R_ITEM_AMMO_X(button) + 6, R_ITEM_AMMO_Y(button), 8, 8, 1 << 10, 1 << 10);
     }
 
     CLOSE_DISPS(play->state.gfxCtx, "../z_parameter.c", 3158);
@@ -3307,7 +3314,6 @@ typedef struct AmmoRomanToken {
 } AmmoRomanToken; // size = 0x4
 
 #define AMMO_ROMAN_GLYPH_NONE 0xFF
-#define AMMO_ROMAN_MAX_GLYPHS 8
 
 static s32 Interface_FormatAmmoRoman(s16 ammo, u8* glyphs, s32 glyphCapacity) {
     static AmmoRomanToken sTokens[] = {
