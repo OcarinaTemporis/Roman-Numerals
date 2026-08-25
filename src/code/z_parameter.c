@@ -3292,6 +3292,57 @@ static s32 Interface_FormatRupeesRoman(s16 rupees, u8* glyphs, s32 glyphCapacity
     return glyphCount;
 }
 
+typedef enum AmmoRomanGlyph {
+    AMMO_ROMAN_GLYPH_I,
+    AMMO_ROMAN_GLYPH_V,
+    AMMO_ROMAN_GLYPH_X,
+    AMMO_ROMAN_GLYPH_L,
+    AMMO_ROMAN_GLYPH_MAX
+} AmmoRomanGlyph;
+
+typedef struct AmmoRomanToken {
+    /* 0x00 */ s16 value;
+    /* 0x02 */ u8 firstGlyph;
+    /* 0x03 */ u8 secondGlyph;
+} AmmoRomanToken; // size = 0x4
+
+#define AMMO_ROMAN_GLYPH_NONE 0xFF
+#define AMMO_ROMAN_MAX_GLYPHS 8
+
+static s32 Interface_FormatAmmoRoman(s16 ammo, u8* glyphs, s32 glyphCapacity) {
+    static AmmoRomanToken sTokens[] = {
+        { 50, AMMO_ROMAN_GLYPH_L, AMMO_ROMAN_GLYPH_NONE }, { 40, AMMO_ROMAN_GLYPH_X, AMMO_ROMAN_GLYPH_L },
+        { 10, AMMO_ROMAN_GLYPH_X, AMMO_ROMAN_GLYPH_NONE }, { 9, AMMO_ROMAN_GLYPH_I, AMMO_ROMAN_GLYPH_X },
+        { 5, AMMO_ROMAN_GLYPH_V, AMMO_ROMAN_GLYPH_NONE },  { 4, AMMO_ROMAN_GLYPH_I, AMMO_ROMAN_GLYPH_V },
+        { 1, AMMO_ROMAN_GLYPH_I, AMMO_ROMAN_GLYPH_NONE },
+    };
+    s32 glyphCount = 0;
+    s32 tokenIndex;
+    s32 tokenGlyphCount;
+
+    if ((glyphCapacity <= 0) || (ammo <= 0) || (ammo > 50)) {
+        return 0;
+    }
+
+    for (tokenIndex = 0; tokenIndex < ARRAY_COUNT(sTokens); tokenIndex++) {
+        tokenGlyphCount = sTokens[tokenIndex].secondGlyph == AMMO_ROMAN_GLYPH_NONE ? 1 : 2;
+
+        while (ammo >= sTokens[tokenIndex].value) {
+            if ((glyphCount + tokenGlyphCount) > glyphCapacity) {
+                return glyphCount;
+            }
+
+            glyphs[glyphCount++] = sTokens[tokenIndex].firstGlyph;
+            if (tokenGlyphCount == 2) {
+                glyphs[glyphCount++] = sTokens[tokenIndex].secondGlyph;
+            }
+            ammo -= sTokens[tokenIndex].value;
+        }
+    }
+
+    return glyphCount;
+}
+
 void Interface_Draw(PlayState* play) {
     static s16 magicArrowEffectsR[] = { 255, 100, 255 };
     static s16 magicArrowEffectsG[] = { 0, 100, 255 };
