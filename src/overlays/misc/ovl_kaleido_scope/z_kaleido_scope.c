@@ -3136,10 +3136,12 @@ void KaleidoScope_SetVertices(PlayState* play, GraphicsContext* gfxCtx) {
                     pauseCtx->itemVtx[i + (l * 4) + 0].v.cn[1] = pauseCtx->itemVtx[i + (l * 4) + 1].v.cn[1] =
                         pauseCtx->itemVtx[i + (l * 4) + 2].v.cn[1] = pauseCtx->itemVtx[i + (l * 4) + 3].v.cn[1] =
                             pauseCtx->itemVtx[i + (l * 4) + 0].v.cn[2] = pauseCtx->itemVtx[i + (l * 4) + 1].v.cn[2] =
-                                pauseCtx->itemVtx[i + (l * 4) + 2].v.cn[2] = pauseCtx->itemVtx[i + (l * 4) + 3].v.cn[2] = 255;
+                                pauseCtx->itemVtx[i + (l * 4) + 2].v.cn[2] =
+                                    pauseCtx->itemVtx[i + (l * 4) + 3].v.cn[2] = 255;
 
             pauseCtx->itemVtx[i + (l * 4) + 0].v.cn[3] = pauseCtx->itemVtx[i + (l * 4) + 1].v.cn[3] =
-                pauseCtx->itemVtx[i + (l * 4) + 2].v.cn[3] = pauseCtx->itemVtx[i + (l * 4) + 3].v.cn[3] = pauseCtx->alpha;
+                pauseCtx->itemVtx[i + (l * 4) + 2].v.cn[3] = pauseCtx->itemVtx[i + (l * 4) + 3].v.cn[3] =
+                    pauseCtx->alpha;
         }
 
         i += ITEM_AMMO_GLYPH_QUAD_COUNT * 4;

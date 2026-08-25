@@ -2,7 +2,7 @@
 #define SCENE_H
 
 #include "avoid_ub.h"
-#include "ultra64.h"
+#include "ultra64.h" //IWYU pragma: keep
 #include "bgcheck.h"
 #include "environment.h"
 #include "light.h"

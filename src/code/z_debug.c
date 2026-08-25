@@ -341,17 +341,17 @@ void Debug_DrawText(GraphicsContext* gfxCtx) {
         Regs_DrawEditor(&printer);
     }
 #endif
-// Draw rupee count with GfxPrint
-         GfxPrint_SetColor(&printer, 255, 255, 255, 255);
-         GfxPrint_SetPos(&printer, 1, 1);
-         GfxPrint_Printf(&printer, "Arabic: %d", gSaveContext.save.info.playerData.rupees);
-         {
-             char romanRupees[16];
+    // Draw rupee count with GfxPrint
+    GfxPrint_SetColor(&printer, 255, 255, 255, 255);
+    GfxPrint_SetPos(&printer, 1, 1);
+    GfxPrint_Printf(&printer, "Arabic: %d", gSaveContext.save.info.playerData.rupees);
+    {
+        char romanRupees[16];
 
-             Debug_RupeesToRoman(gSaveContext.save.info.playerData.rupees, romanRupees);
-             GfxPrint_SetPos(&printer, 1, 2);
-             GfxPrint_Printf(&printer, "Roman: %s", romanRupees);
-         }
+        Debug_RupeesToRoman(gSaveContext.save.info.playerData.rupees, romanRupees);
+        GfxPrint_SetPos(&printer, 1, 2);
+        GfxPrint_Printf(&printer, "Roman: %s", romanRupees);
+    }
     sDebugCamTextEntryCount = 0;
 
     gfx = GfxPrint_Close(&printer);

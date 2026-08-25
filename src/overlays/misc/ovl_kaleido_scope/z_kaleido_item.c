@@ -17,7 +17,10 @@
 #include "assets/textures/parameter_static/roman_numerals.h"
 
 static void* sKaleidoAmmoRomanGlyphTextures[] = {
-    gAmmodigitI, gAmmodigitV, gAmmodigitX, gAmmodigitL,
+    gAmmodigitI,
+    gAmmodigitV,
+    gAmmodigitX,
+    gAmmodigitL,
 };
 
 u8 gAmmoItems[] = {
@@ -48,18 +51,18 @@ static s16 sAmmoVtxOffset[] = {
     ITEM_QUAD_AMMO_NUT_FIRST - ITEM_QUAD_AMMO_FIRST,       // ITEM_DEKU_NUT
     ITEM_QUAD_AMMO_BOMB_FIRST - ITEM_QUAD_AMMO_FIRST,      // ITEM_BOMB
     ITEM_QUAD_AMMO_BOW_FIRST - ITEM_QUAD_AMMO_FIRST,       // ITEM_BOW
-    99,                                                   // (ITEM_ARROW_FIRE)
-    99,                                                   // (ITEM_DINS_FIRE)
+    99,                                                    // (ITEM_ARROW_FIRE)
+    99,                                                    // (ITEM_DINS_FIRE)
     ITEM_QUAD_AMMO_SLINGSHOT_FIRST - ITEM_QUAD_AMMO_FIRST, // ITEM_SLINGSHOT
-    99,                                                   // (ITEM_OCARINA_FAIRY)
-    99,                                                   // (ITEM_OCARINA_OF_TIME)
+    99,                                                    // (ITEM_OCARINA_FAIRY)
+    99,                                                    // (ITEM_OCARINA_OF_TIME)
     ITEM_QUAD_AMMO_BOMBCHU_FIRST - ITEM_QUAD_AMMO_FIRST,   // ITEM_BOMBCHU
-    99,                                                   // (ITEM_HOOKSHOT)
-    99,                                                   // (ITEM_LONGSHOT)
-    99,                                                   // (ITEM_ARROW_ICE)
-    99,                                                   // (ITEM_FARORES_WIND)
-    99,                                                   // (ITEM_BOOMERANG)
-    99,                                                   // (ITEM_LENS)
+    99,                                                    // (ITEM_HOOKSHOT)
+    99,                                                    // (ITEM_LONGSHOT)
+    99,                                                    // (ITEM_ARROW_ICE)
+    99,                                                    // (ITEM_FARORES_WIND)
+    99,                                                    // (ITEM_BOOMERANG)
+    99,                                                    // (ITEM_LENS)
     ITEM_QUAD_AMMO_BEAN_FIRST - ITEM_QUAD_AMMO_FIRST,      // ITEM_MAGIC_BEAN
 };
 
@@ -97,8 +100,8 @@ void KaleidoScope_DrawAmmoCount(PauseContext* pauseCtx, GraphicsContext* gfxCtx,
     gDPPipeSync(POLY_OPA_DISP++);
 
     for (glyphIndex = 0; glyphIndex < ammoRomanGlyphCount; glyphIndex++) {
-        gSPVertex(POLY_OPA_DISP++,
-                  &pauseCtx->itemVtx[(ITEM_QUAD_AMMO_FIRST + sAmmoVtxOffset[item] + glyphIndex) * 4], 4, 0);
+        gSPVertex(POLY_OPA_DISP++, &pauseCtx->itemVtx[(ITEM_QUAD_AMMO_FIRST + sAmmoVtxOffset[item] + glyphIndex) * 4],
+                  4, 0);
 
         gDPLoadTextureBlock(POLY_OPA_DISP++, sKaleidoAmmoRomanGlyphTextures[ammoRomanGlyphs[glyphIndex]], G_IM_FMT_IA,
                             G_IM_SIZ_8b, 8, 8, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK,

@@ -14,7 +14,7 @@
 #include "sequence.h"
 #include "sfx.h"
 #include "sys_matrix.h"
-#include "terminal.h"
+#include "terminal.h" // IWYU pragma: keep
 #include "translation.h"
 #include "versions.h"
 #include "audio.h"
@@ -2997,7 +2997,10 @@ void Interface_DrawItemIconTexture(PlayState* play, void* texture, s16 button) {
 #define AMMO_ROMAN_GLYPH_ADVANCE 4
 
 static void* sAmmoRomanGlyphTextures[] = {
-    gAmmodigitI, gAmmodigitV, gAmmodigitX, gAmmodigitL,
+    gAmmodigitI,
+    gAmmodigitV,
+    gAmmodigitX,
+    gAmmodigitL,
 };
 
 void Interface_DrawAmmoCount(PlayState* play, s16 button, s16 alpha) {
@@ -3045,13 +3048,13 @@ void Interface_DrawAmmoCount(PlayState* play, s16 button, s16 alpha) {
             gDPSetPrimColor(OVERLAY_DISP++, 0, 0, 100, 100, 100, alpha);
         }
 
-        ammoRomanGlyphCount = (ammo <= 50) ? RomanNumerals_Format(ammo, ammoRomanGlyphs, ARRAY_COUNT(ammoRomanGlyphs)) : 0;
+        ammoRomanGlyphCount =
+            (ammo <= 50) ? RomanNumerals_Format(ammo, ammoRomanGlyphs, ARRAY_COUNT(ammoRomanGlyphs)) : 0;
 
         for (glyphIndex = 0; glyphIndex < ammoRomanGlyphCount; glyphIndex++) {
-            OVERLAY_DISP = Gfx_TextureIA8(
-                OVERLAY_DISP, sAmmoRomanGlyphTextures[ammoRomanGlyphs[glyphIndex]], 8, 8,
-                R_ITEM_AMMO_X(button) + (glyphIndex * AMMO_ROMAN_GLYPH_ADVANCE), R_ITEM_AMMO_Y(button), 8, 8,
-                1 << 10, 1 << 10);
+            OVERLAY_DISP = Gfx_TextureIA8(OVERLAY_DISP, sAmmoRomanGlyphTextures[ammoRomanGlyphs[glyphIndex]], 8, 8,
+                                          R_ITEM_AMMO_X(button) + (glyphIndex * AMMO_ROMAN_GLYPH_ADVANCE),
+                                          R_ITEM_AMMO_Y(button), 8, 8, 1 << 10, 1 << 10);
         }
     }
 
@@ -3317,7 +3320,7 @@ void Interface_Draw(PlayState* play) {
 
                     rupeeRomanGlyphCount =
                         RomanNumerals_Format(gSaveContext.save.info.inventory.dungeonKeys[gSaveContext.mapIndex],
-                                                    rupeeRomanGlyphs, ARRAY_COUNT(rupeeRomanGlyphs));
+                                             rupeeRomanGlyphs, ARRAY_COUNT(rupeeRomanGlyphs));
 
                     for (svar1 = 0, svar3 = 42; svar1 < rupeeRomanGlyphCount; svar1++) {
                         RomanNumeralGlyph glyph = rupeeRomanGlyphs[svar1];
@@ -3348,7 +3351,7 @@ void Interface_Draw(PlayState* play) {
                           PRIMITIVE, 0);
 
         rupeeRomanGlyphCount = RomanNumerals_Format(gSaveContext.save.info.playerData.rupees, rupeeRomanGlyphs,
-                                                           ARRAY_COUNT(rupeeRomanGlyphs));
+                                                    ARRAY_COUNT(rupeeRomanGlyphs));
 
         for (svar1 = 0, svar3 = 42; svar1 < rupeeRomanGlyphCount; svar1++) {
             RomanNumeralGlyph glyph = rupeeRomanGlyphs[svar1];
