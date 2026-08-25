@@ -3370,27 +3370,18 @@ void Interface_Draw(PlayState* play) {
                     gDPSetCombineLERP(OVERLAY_DISP++, 0, 0, 0, PRIMITIVE, TEXEL0, 0, PRIMITIVE, 0, 0, 0, 0, PRIMITIVE,
                                       TEXEL0, 0, PRIMITIVE, 0);
 
-                    interfaceCtx->counterDigits[2] = 0;
-                    interfaceCtx->counterDigits[3] =
-                        gSaveContext.save.info.inventory.dungeonKeys[gSaveContext.mapIndex];
+                    rupeeRomanGlyphCount =
+                        Interface_FormatRupeesRoman(gSaveContext.save.info.inventory.dungeonKeys[gSaveContext.mapIndex],
+                                                    rupeeRomanGlyphs, ARRAY_COUNT(rupeeRomanGlyphs));
 
-                    while (interfaceCtx->counterDigits[3] >= 10) {
-                        interfaceCtx->counterDigits[2]++;
-                        interfaceCtx->counterDigits[3] -= 10;
+                    for (svar1 = 0, svar3 = 42; svar1 < rupeeRomanGlyphCount; svar1++) {
+                        RupeeRomanGlyph glyph = rupeeRomanGlyphs[svar1];
+                        s16 glyphWidth = sRupeeRomanGlyphWidths[glyph];
+                        s16 glyphTextureWidth = sRupeeRomanGlyphTextureWidths[glyph];
+                        OVERLAY_DISP = Gfx_TextureI8(OVERLAY_DISP, sRupeeRomanGlyphTextures[glyph], glyphTextureWidth,
+                                                     16, svar3, 190, glyphWidth, 16, 1 << 10, 1 << 10);
+                        svar3 += sRupeeRomanGlyphAdvances[glyph];
                     }
-
-                    svar3 = 42;
-
-                    if (interfaceCtx->counterDigits[2] != 0) {
-                        OVERLAY_DISP = Gfx_TextureI8(
-                            OVERLAY_DISP, ((u8*)gCounterDigit0Tex + (8 * 16 * interfaceCtx->counterDigits[2])), 8, 16,
-                            svar3, 190, 8, 16, 1 << 10, 1 << 10);
-                        svar3 += 8;
-                    }
-
-                    OVERLAY_DISP = Gfx_TextureI8(OVERLAY_DISP,
-                                                 ((u8*)gCounterDigit0Tex + (8 * 16 * interfaceCtx->counterDigits[3])),
-                                                 8, 16, svar3, 190, 8, 16, 1 << 10, 1 << 10);
                 }
                 break;
             default:
