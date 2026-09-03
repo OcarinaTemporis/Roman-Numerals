@@ -22,6 +22,7 @@
 #include "ocarina.h"
 #include "play_state.h"
 #include "player.h"
+#include "roman_numerals.h"
 #include "save.h"
 
 #include "assets/textures/parameter_static/parameter_static.h"
@@ -2293,54 +2294,49 @@ void Message_Decode(PlayState* play) {
                 }
                 decodedBufPos--;
             } else if (curChar == MESSAGE_TOKENS) {
-                // Convert the current number of collected gold skulltula tokens to digits and
-                //  add the digits to the decoded buffer in place of the control character.
+                // Convert the current number of collected gold skulltula tokens to Roman numerals
+                // and write them to the decoded buffer in place of the control character.
+                u8 romanGlyphs[ROMAN_NUMERAL_MAX_GLYPHS];
+                s32 romanGlyphCount;
+                static const u8 sRomanNumeralGlyphChars[ROMAN_NUMERAL_GLYPH_MAX] = {
+                    'I', 'V', 'X', 'L', 'C', 'D', 'M',
+                };
+
                 PRINTF(T("\n金スタ合計数 ＝ %d", "\nTotal number of gold skulls = %d"),
                        gSaveContext.save.info.inventory.gsTokens);
-                digits[0] = digits[1] = 0;
-                digits[2] = gSaveContext.save.info.inventory.gsTokens;
 
-                while (digits[2] >= 100) {
-                    digits[0]++;
-                    digits[2] -= 100;
-                }
-                while (digits[2] >= 10) {
-                    digits[1]++;
-                    digits[2] -= 10;
-                }
+                romanGlyphCount = RomanNumerals_Format(gSaveContext.save.info.inventory.gsTokens, romanGlyphs,
+                                                       ARRAY_COUNT(romanGlyphs));
 
-                loadChar = false;
-                for (i = 0; i < 3; i++) {
-                    if (i == 2 || digits[i] != 0) {
-                        loadChar = true;
-                    }
-                    if (loadChar) {
-                        Font_LoadChar(font, digits[i] + '0' - ' ', charTexIdx);
-                        charTexIdx += FONT_CHAR_TEX_SIZE;
-                        MSG_BUF_DECODED[decodedBufPos] = digits[i] + '0';
-                        PRINTF("%x(%x) ", digits[i] + '0' - ' ', digits[i]);
-                        decodedBufPos++;
-                    }
+                for (i = 0; i < romanGlyphCount; i++) {
+                    u8 romanChar = sRomanNumeralGlyphChars[romanGlyphs[i]];
+
+                    Font_LoadChar(font, romanChar - ' ', charTexIdx);
+                    charTexIdx += FONT_CHAR_TEX_SIZE;
+                    MSG_BUF_DECODED[decodedBufPos] = romanChar;
+                    decodedBufPos++;
                 }
                 decodedBufPos--;
             } else if (curChar == MESSAGE_FISH_INFO) {
+                // Convert the fishing hole fish size to Roman numerals and write them to the decoded buffer.
+                u8 romanGlyphs[ROMAN_NUMERAL_MAX_GLYPHS];
+                s32 romanGlyphCount;
+                static const u8 sRomanNumeralGlyphChars[ROMAN_NUMERAL_GLYPH_MAX] = {
+                    'I', 'V', 'X', 'L', 'C', 'D', 'M',
+                };
+
                 PRINTF(T("\n釣り堀魚サイズ ＝ ", "\nFishing hole fish size = "));
-                digits[0] = 0;
-                digits[1] = gSaveContext.minigameScore;
 
-                while (digits[1] >= 10) {
-                    digits[0]++;
-                    digits[1] -= 10;
-                }
+                romanGlyphCount =
+                    RomanNumerals_Format(gSaveContext.minigameScore, romanGlyphs, ARRAY_COUNT(romanGlyphs));
 
-                for (i = 0; i < 2; i++) {
-                    if (i == 1 || digits[i] != 0) {
-                        Font_LoadChar(font, digits[i] + '0' - ' ', charTexIdx);
-                        charTexIdx += FONT_CHAR_TEX_SIZE;
-                        MSG_BUF_DECODED[decodedBufPos] = digits[i] + '0';
-                        PRINTF("%x(%x) ", digits[i] + '0' - ' ', digits[i]);
-                        decodedBufPos++;
-                    }
+                for (i = 0; i < romanGlyphCount; i++) {
+                    u8 romanChar = sRomanNumeralGlyphChars[romanGlyphs[i]];
+
+                    Font_LoadChar(font, romanChar - ' ', charTexIdx);
+                    charTexIdx += FONT_CHAR_TEX_SIZE;
+                    MSG_BUF_DECODED[decodedBufPos] = romanChar;
+                    decodedBufPos++;
                 }
                 decodedBufPos--;
             } else if (curChar == MESSAGE_HIGHSCORE) {
@@ -2370,37 +2366,26 @@ void Message_Decode(PlayState* play) {
                 switch (MSG_BUF[msgCtx->msgBufPos] & 0xFF) {
                     case HS_HBA:
                     case HS_POE_POINTS:
-                    case HS_FISHING:
-                        digits[0] = digits[1] = digits[2] = 0;
-                        digits[3] = value;
+                    case HS_FISHING: {
+                        u8 romanGlyphs[ROMAN_NUMERAL_MAX_GLYPHS];
+                        s32 romanGlyphCount;
+                        static const u8 sRomanNumeralGlyphChars[ROMAN_NUMERAL_GLYPH_MAX] = {
+                            'I', 'V', 'X', 'L', 'C', 'D', 'M',
+                        };
 
-                        while (digits[3] >= 1000) {
-                            digits[0]++;
-                            digits[3] -= 1000;
-                        }
-                        while (digits[3] >= 100) {
-                            digits[1]++;
-                            digits[3] -= 100;
-                        }
-                        while (digits[3] >= 10) {
-                            digits[2]++;
-                            digits[3] -= 10;
-                        }
+                        romanGlyphCount = RomanNumerals_Format(value, romanGlyphs, ARRAY_COUNT(romanGlyphs));
 
-                        loadChar = false;
-                        for (i = 0; i < 4; i++) {
-                            if (i == 3 || digits[i] != 0) {
-                                loadChar = true;
-                            }
-                            if (loadChar) {
-                                Font_LoadChar(font, digits[i] + '0' - ' ', charTexIdx);
-                                MSG_BUF_DECODED[decodedBufPos] = digits[i] + '0';
-                                charTexIdx += FONT_CHAR_TEX_SIZE;
-                                decodedBufPos++;
-                            }
+                        for (i = 0; i < romanGlyphCount; i++) {
+                            u8 romanChar = sRomanNumeralGlyphChars[romanGlyphs[i]];
+
+                            Font_LoadChar(font, romanChar - ' ', charTexIdx);
+                            charTexIdx += FONT_CHAR_TEX_SIZE;
+                            MSG_BUF_DECODED[decodedBufPos] = romanChar;
+                            decodedBufPos++;
                         }
                         decodedBufPos--;
                         break;
+                    }
                     case HS_UNK_05:
                         break;
                     case HS_HORSE_RACE:
@@ -2441,33 +2426,54 @@ void Message_Decode(PlayState* play) {
                         break;
                 }
             } else if (curChar == MESSAGE_TIME) {
-                PRINTF(T("\nゼルダ時間 ＝ ", "\nZelda time = "));
-                digits[0] = 0;
-                digits[1] = (gSaveContext.save.dayTime * (24.0f * 60.0f / 0x10000)) / 60.0f;
-                while (digits[1] >= 10) {
-                    digits[0]++;
-                    digits[1] -= 10;
-                }
-                digits[2] = 0;
-                digits[3] = (s16)(gSaveContext.save.dayTime * (24.0f * 60.0f / 0x10000)) % 60;
-                while (digits[3] >= 10) {
-                    digits[2]++;
-                    digits[3] -= 10;
-                }
+                if (gSaveContext.save.dayTime >= CLOCK_TIME(6, 30) && gSaveContext.save.dayTime <= CLOCK_TIME(7, 27)) {
+                    static const char primaText[] = "prima";
 
-                for (i = 0; i < 4; i++) {
-                    Font_LoadChar(font, digits[i] + '0' - ' ', charTexIdx);
-                    charTexIdx += FONT_CHAR_TEX_SIZE;
-                    MSG_BUF_DECODED[decodedBufPos] = digits[i] + '0';
-                    decodedBufPos++;
-                    if (i == 1) {
-                        Font_LoadChar(font, ':' - ' ', charTexIdx);
+                    for (i = 0; primaText[i] != '\0'; i++) {
+                        Font_LoadChar(font, primaText[i] - ' ', charTexIdx);
                         charTexIdx += FONT_CHAR_TEX_SIZE;
-                        MSG_BUF_DECODED[decodedBufPos] = ':';
+                        MSG_BUF_DECODED[decodedBufPos] = primaText[i];
                         decodedBufPos++;
                     }
+                } else if (gSaveContext.save.dayTime >= CLOCK_TIME(7, 28) &&
+                           gSaveContext.save.dayTime <= CLOCK_TIME(8, 24)) {
+                    static const char secundaText[] = "secunda";
+
+                    for (i = 0; secundaText[i] != '\0'; i++) {
+                        Font_LoadChar(font, secundaText[i] - ' ', charTexIdx);
+                        charTexIdx += FONT_CHAR_TEX_SIZE;
+                        MSG_BUF_DECODED[decodedBufPos] = secundaText[i];
+                        decodedBufPos++;
+                    }
+                } else {
+                    PRINTF(T("\nゼルダ時間 ＝ ", "\nZelda time = "));
+                    digits[0] = 0;
+                    digits[1] = (gSaveContext.save.dayTime * (24.0f * 60.0f / 0x10000)) / 60.0f;
+                    while (digits[1] >= 10) {
+                        digits[0]++;
+                        digits[1] -= 10;
+                    }
+                    digits[2] = 0;
+                    digits[3] = (s16)(gSaveContext.save.dayTime * (24.0f * 60.0f / 0x10000)) % 60;
+                    while (digits[3] >= 10) {
+                        digits[2]++;
+                        digits[3] -= 10;
+                    }
+
+                    for (i = 0; i < 4; i++) {
+                        Font_LoadChar(font, digits[i] + '0' - ' ', charTexIdx);
+                        charTexIdx += FONT_CHAR_TEX_SIZE;
+                        MSG_BUF_DECODED[decodedBufPos] = digits[i] + '0';
+                        decodedBufPos++;
+                        if (i == 1) {
+                            Font_LoadChar(font, ':' - ' ', charTexIdx);
+                            charTexIdx += FONT_CHAR_TEX_SIZE;
+                            MSG_BUF_DECODED[decodedBufPos] = ':';
+                            decodedBufPos++;
+                        }
+                    }
+                    decodedBufPos--;
                 }
-                decodedBufPos--;
             } else if (curChar == MESSAGE_ITEM_ICON) {
                 MSG_BUF_DECODED[++decodedBufPos] = MSG_BUF[msgCtx->msgBufPos + 1];
                 PRINTF("ITEM_NO=(%d) (%d)\n", MSG_BUF_DECODED[decodedBufPos], MSG_BUF[msgCtx->msgBufPos + 1]);

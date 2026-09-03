@@ -2994,7 +2994,6 @@ void Interface_DrawItemIconTexture(PlayState* play, void* texture, s16 button) {
 }
 
 #define AMMO_ROMAN_MAX_GLYPHS 8
-#define AMMO_ROMAN_GLYPH_ADVANCE 4
 
 static void* sAmmoRomanGlyphTextures[] = {
     gAmmodigitI,
@@ -3003,12 +3002,15 @@ static void* sAmmoRomanGlyphTextures[] = {
     gAmmodigitL,
 };
 
+static s16 sAmmoRomanGlyphAdvances[ROMAN_NUMERAL_GLYPH_MAX] = AMMO_ROMAN_GLYPH_ADVANCES;
+
 void Interface_DrawAmmoCount(PlayState* play, s16 button, s16 alpha) {
     s16 i;
     s16 ammo;
     u8 ammoRomanGlyphs[AMMO_ROMAN_MAX_GLYPHS];
     s16 ammoRomanGlyphCount;
     s16 glyphIndex;
+    s16 glyphX;
 
     OPEN_DISPS(play->state.gfxCtx, "../z_parameter.c", 3105);
 
@@ -3051,10 +3053,11 @@ void Interface_DrawAmmoCount(PlayState* play, s16 button, s16 alpha) {
         ammoRomanGlyphCount =
             (ammo <= 50) ? RomanNumerals_Format(ammo, ammoRomanGlyphs, ARRAY_COUNT(ammoRomanGlyphs)) : 0;
 
+        glyphX = R_ITEM_AMMO_X(button);
         for (glyphIndex = 0; glyphIndex < ammoRomanGlyphCount; glyphIndex++) {
             OVERLAY_DISP = Gfx_TextureIA8(OVERLAY_DISP, sAmmoRomanGlyphTextures[ammoRomanGlyphs[glyphIndex]], 8, 8,
-                                          R_ITEM_AMMO_X(button) + (glyphIndex * AMMO_ROMAN_GLYPH_ADVANCE),
-                                          R_ITEM_AMMO_Y(button), 8, 8, 1 << 10, 1 << 10);
+                                          glyphX, R_ITEM_AMMO_Y(button), 8, 8, 1 << 10, 1 << 10);
+            glyphX += sAmmoRomanGlyphAdvances[ammoRomanGlyphs[glyphIndex]];
         }
     }
 
@@ -3263,7 +3266,9 @@ void Interface_Draw(PlayState* play) {
     MessageContext* msgCtx = &play->msgCtx;
     Player* player = GET_PLAYER(play);
     u8 rupeeRomanGlyphs[ROMAN_NUMERAL_MAX_GLYPHS];
+    u8 hbaRomanGlyphs[ROMAN_NUMERAL_MAX_GLYPHS];
     s16 rupeeRomanGlyphCount;
+    s16 hbaRomanGlyphCount;
     s16 svar1;
     s16 svar2;
     s16 svar3;
@@ -3574,16 +3579,16 @@ void Interface_Draw(PlayState* play) {
                 gDPSetCombineLERP(OVERLAY_DISP++, 0, 0, 0, PRIMITIVE, TEXEL0, 0, PRIMITIVE, 0, 0, 0, 0, PRIMITIVE,
                                   TEXEL0, 0, PRIMITIVE, 0);
 
-                svar5 = WREG(32) + 6 * 9;
+                hbaRomanGlyphCount =
+                    RomanNumerals_Format(gSaveContext.minigameScore, hbaRomanGlyphs, ARRAY_COUNT(hbaRomanGlyphs));
 
-                for (svar1 = svar2 = 0; svar1 < 4; svar1++) {
-                    if (sHBAScoreDigits[svar1] != 0 || (svar2 != 0) || (svar1 >= 3)) {
-                        OVERLAY_DISP = Gfx_TextureI8(
-                            OVERLAY_DISP, ((u8*)gCounterDigit0Tex + (8 * 16 * sHBAScoreDigits[svar1])), 8, 16, svar5,
-                            (ZREG(15) - 2), sDigitWidths[0], VREG(42), VREG(43) << 1, VREG(43) << 1);
-                        svar5 += 9;
-                        svar2++;
-                    }
+                for (svar1 = 0, svar5 = WREG(32) + 6 * 9; svar1 < hbaRomanGlyphCount; svar1++) {
+                    RomanNumeralGlyph glyph = hbaRomanGlyphs[svar1];
+                    s16 glyphWidth = sRupeeRomanGlyphWidths[glyph];
+                    s16 glyphTextureWidth = sRupeeRomanGlyphTextureWidths[glyph];
+                    OVERLAY_DISP = Gfx_TextureI8(OVERLAY_DISP, sRupeeRomanGlyphTextures[glyph], glyphTextureWidth, 16,
+                                                 svar5, (ZREG(15) - 2), glyphWidth, 16, 1 << 10, 1 << 10);
+                    svar5 += sRupeeRomanGlyphAdvances[glyph];
                 }
 
                 gDPPipeSync(OVERLAY_DISP++);

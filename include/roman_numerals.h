@@ -16,6 +16,7 @@ typedef enum RomanNumeralGlyph {
 
 #define ROMAN_NUMERAL_GLYPH_NONE 0xFF
 #define ROMAN_NUMERAL_MAX_GLYPHS 16
+#define AMMO_ROMAN_GLYPH_ADVANCES { 2, 6, 6, 4, 4, 4, 4 }
 
 /** format a value as Roman glyphs */
 s32 RomanNumerals_Format(s16 value, u8* glyphs, s32 glyphCapacity);

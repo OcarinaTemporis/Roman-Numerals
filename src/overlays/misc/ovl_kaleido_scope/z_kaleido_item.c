@@ -23,6 +23,8 @@ static void* sKaleidoAmmoRomanGlyphTextures[] = {
     gAmmodigitL,
 };
 
+static s16 sKaleidoAmmoRomanGlyphAdvances[ROMAN_NUMERAL_GLYPH_MAX] = AMMO_ROMAN_GLYPH_ADVANCES;
+
 u8 gAmmoItems[] = {
     ITEM_DEKU_STICK, // SLOT_DEKU_STICK
     ITEM_DEKU_NUT,   // SLOT_DEKU_NUT
@@ -71,6 +73,8 @@ void KaleidoScope_DrawAmmoCount(PauseContext* pauseCtx, GraphicsContext* gfxCtx,
     u8 ammoRomanGlyphs[ROMAN_NUMERAL_MAX_GLYPHS];
     s16 ammoRomanGlyphCount;
     s16 glyphIndex;
+    s16 glyphX;
+    s16 glyphBaseX;
 
     OPEN_DISPS(gfxCtx, "../z_kaleido_item.c", 69);
 
@@ -99,7 +103,16 @@ void KaleidoScope_DrawAmmoCount(PauseContext* pauseCtx, GraphicsContext* gfxCtx,
 
     gDPPipeSync(POLY_OPA_DISP++);
 
+    glyphBaseX = pauseCtx->itemVtx[(ITEM_QUAD_AMMO_FIRST + sAmmoVtxOffset[item]) * 4].v.ob[0];
+    glyphX = 0;
     for (glyphIndex = 0; glyphIndex < ammoRomanGlyphCount; glyphIndex++) {
+        pauseCtx->itemVtx[(ITEM_QUAD_AMMO_FIRST + sAmmoVtxOffset[item] + glyphIndex) * 4 + 0].v.ob[0] =
+            pauseCtx->itemVtx[(ITEM_QUAD_AMMO_FIRST + sAmmoVtxOffset[item] + glyphIndex) * 4 + 2].v.ob[0] =
+                glyphBaseX + glyphX;
+        pauseCtx->itemVtx[(ITEM_QUAD_AMMO_FIRST + sAmmoVtxOffset[item] + glyphIndex) * 4 + 1].v.ob[0] =
+            pauseCtx->itemVtx[(ITEM_QUAD_AMMO_FIRST + sAmmoVtxOffset[item] + glyphIndex) * 4 + 3].v.ob[0] =
+                glyphBaseX + glyphX + ITEM_AMMO_DIGIT_QUAD_WIDTH;
+
         gSPVertex(POLY_OPA_DISP++, &pauseCtx->itemVtx[(ITEM_QUAD_AMMO_FIRST + sAmmoVtxOffset[item] + glyphIndex) * 4],
                   4, 0);
 
@@ -108,6 +121,7 @@ void KaleidoScope_DrawAmmoCount(PauseContext* pauseCtx, GraphicsContext* gfxCtx,
                             G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
 
         gSP1Quadrangle(POLY_OPA_DISP++, 0, 2, 3, 1, 0);
+        glyphX += sKaleidoAmmoRomanGlyphAdvances[ammoRomanGlyphs[glyphIndex]];
     }
 
     CLOSE_DISPS(gfxCtx, "../z_kaleido_item.c", 116);

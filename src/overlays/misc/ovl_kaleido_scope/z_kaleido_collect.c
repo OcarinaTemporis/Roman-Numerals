@@ -4,6 +4,7 @@
 #include "controller.h"
 #include "gfx.h"
 #include "printf.h"
+#include "roman_numerals.h"
 #include "regs.h"
 #include "sfx.h"
 #include "ocarina.h"
@@ -11,6 +12,7 @@
 #include "save.h"
 
 #include "assets/textures/parameter_static/parameter_static.h"
+#include "assets/textures/parameter_static/roman_numerals.h"
 #include "assets/textures/icon_item_static/icon_item_static.h"
 
 #define SONG_MAX_LENGTH 8
@@ -80,6 +82,13 @@ void KaleidoScope_DrawQuestStatus(PlayState* play, GraphicsContext* gfxCtx) {
     };
     static s16 sPlayedSongBtnsAlpha[SONG_MAX_LENGTH] = { 0 };
     static s32 sUnused1 = 0;
+    static void* sRupeeRomanGlyphTextures[ROMAN_NUMERAL_GLYPH_MAX] = {
+        gRupeeRomanITex, gRupeeRomanVTex, gRupeeRomanXTex, gRupeeRomanLTex,
+        gRupeeRomanCTex, gRupeeRomanDTex, gRupeeRomanMTex,
+    };
+    static s16 sRupeeRomanGlyphAdvances[ROMAN_NUMERAL_GLYPH_MAX] = { 4, 7, 7, 8, 8, 11, 8 };
+    static s16 sRupeeRomanGlyphWidths[ROMAN_NUMERAL_GLYPH_MAX] = { 8, 12, 12, 8, 12, 12, 8 };
+    static s16 sRupeeRomanGlyphTextureWidths[ROMAN_NUMERAL_GLYPH_MAX] = { 8, 16, 16, 8, 16, 16, 8 };
 
     static s16 sSongsPrimRed[] = {
         150, // QUEST_SONG_MINUET
@@ -178,7 +187,13 @@ void KaleidoScope_DrawQuestStatus(PlayState* play, GraphicsContext* gfxCtx) {
     s16 targetColorIndex;
     s16 pad2;
     s16 cursorItem;
-    s16 gsTokenDigits[3];
+    u8 gsTokenRomanGlyphs[ROMAN_NUMERAL_MAX_GLYPHS];
+    s16 gsTokenRomanGlyphCount;
+    s16 glyphX;
+    s16 glyphBaseX;
+    s16 glyphWidth;
+    s16 glyphTextureWidth;
+    RomanNumeralGlyph glyph;
 
     OPEN_DISPS(gfxCtx, "../z_kaleido_collect.c", 248);
 
@@ -808,7 +823,7 @@ void KaleidoScope_DrawQuestStatus(PlayState* play, GraphicsContext* gfxCtx) {
     }
 
     // Draw amount of gold skulltula tokens
-    // QUEST_QUAD_SKULL_TOKENS_DIGIT1_SHADOW to QUEST_QUAD_SKULL_TOKENS_DIGIT3
+    // QUEST_QUAD_SKULL_TOKENS_DIGIT1_SHADOW to QUEST_QUAD_SKULL_TOKENS_DIGIT8
 
     if (CHECK_QUEST_ITEM(QUEST_SKULL_TOKEN)) {
         gDPPipeSync(POLY_OPA_DISP++);
@@ -816,47 +831,44 @@ void KaleidoScope_DrawQuestStatus(PlayState* play, GraphicsContext* gfxCtx) {
                           PRIMITIVE, ENVIRONMENT, TEXEL0, ENVIRONMENT, TEXEL0, 0, PRIMITIVE, 0);
         gDPSetEnvColor(POLY_OPA_DISP++, 0, 0, 0, 0);
 
-        gsTokenDigits[0] = gsTokenDigits[1] = 0;
-        gsTokenDigits[2] = gSaveContext.save.info.inventory.gsTokens;
+        gsTokenRomanGlyphCount = RomanNumerals_Format(gSaveContext.save.info.inventory.gsTokens, gsTokenRomanGlyphs,
+                                                      ARRAY_COUNT(gsTokenRomanGlyphs));
 
-        while (gsTokenDigits[2] >= 100) {
-            gsTokenDigits[0]++;
-            gsTokenDigits[2] -= 100;
-        }
-
-        while (gsTokenDigits[2] >= 10) {
-            gsTokenDigits[1]++;
-            gsTokenDigits[2] -= 10;
-        }
-
-        gSPVertex(POLY_OPA_DISP++, &pauseCtx->questVtx[QUEST_QUAD_SKULL_TOKENS_DIGIT1_SHADOW * 4], 6 * 4, 0);
-
-        for (i = 0, j = 0; i < 2; i++) {
-            if (i == 0) {
-                // Text shadow
-                gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 0, 0, 0, pauseCtx->alpha);
+        for (i = 1, j = 0; i < 2; i++) {
+            if (gSaveContext.save.info.inventory.gsTokens == 100) {
+                gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 200, 50, 50, pauseCtx->alpha);
             } else {
-                // Text color
-                if (gSaveContext.save.info.inventory.gsTokens == 100) {
-                    gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 200, 50, 50, pauseCtx->alpha);
-                } else {
-                    gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 255, 255, 255, pauseCtx->alpha);
-                }
+                gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 255, 255, 255, pauseCtx->alpha);
             }
 
-            // Variable reused as a flag indicating all digits onwards should be displayed
-            cursorItem = false;
+            glyphBaseX = pauseCtx->questVtx[(QUEST_QUAD_SKULL_TOKENS_DIGIT1_SHADOW + (i * 8)) * 4].v.ob[0];
+            glyphX = 0;
+            j = 0;
 
-            for (bufI = 0; bufI < 3; bufI++, j += 4) {
-                if ((bufI >= 2) || (gsTokenDigits[bufI] != 0) || cursorItem) {
-                    gDPLoadTextureBlock(POLY_OPA_DISP++, ((u8*)gCounterDigit0Tex + (8 * 16 * gsTokenDigits[bufI])),
-                                        G_IM_FMT_I, G_IM_SIZ_8b, 8, 16, 0, G_TX_NOMIRROR | G_TX_WRAP,
-                                        G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
+            for (bufI = 0; bufI < gsTokenRomanGlyphCount; bufI++) {
+                glyph = gsTokenRomanGlyphs[bufI];
+                glyphWidth = sRupeeRomanGlyphWidths[glyph];
+                glyphTextureWidth = sRupeeRomanGlyphTextureWidths[glyph];
 
-                    gSP1Quadrangle(POLY_OPA_DISP++, j, j + 2, j + 3, j + 1, 0);
+                pauseCtx->questVtx[(QUEST_QUAD_SKULL_TOKENS_DIGIT1_SHADOW + (i * 8) + bufI) * 4 + 0].v.ob[0] =
+                    pauseCtx->questVtx[(QUEST_QUAD_SKULL_TOKENS_DIGIT1_SHADOW + (i * 8) + bufI) * 4 + 2].v.ob[0] =
+                        glyphBaseX + glyphX;
+                pauseCtx->questVtx[(QUEST_QUAD_SKULL_TOKENS_DIGIT1_SHADOW + (i * 8) + bufI) * 4 + 1].v.ob[0] =
+                    pauseCtx->questVtx[(QUEST_QUAD_SKULL_TOKENS_DIGIT1_SHADOW + (i * 8) + bufI) * 4 + 3].v.ob[0] =
+                        glyphBaseX + glyphX + glyphWidth;
+                pauseCtx->questVtx[(QUEST_QUAD_SKULL_TOKENS_DIGIT1_SHADOW + (i * 8) + bufI) * 4 + 1].v.tc[0] =
+                    pauseCtx->questVtx[(QUEST_QUAD_SKULL_TOKENS_DIGIT1_SHADOW + (i * 8) + bufI) * 4 + 3].v.tc[0] =
+                        glyphTextureWidth << 5;
 
-                    cursorItem = true;
-                }
+                glyphX += sRupeeRomanGlyphAdvances[glyph];
+
+                gSPVertex(POLY_OPA_DISP++,
+                          &pauseCtx->questVtx[(QUEST_QUAD_SKULL_TOKENS_DIGIT1_SHADOW + (i * 8) + bufI) * 4], 4, 0);
+                gDPLoadTextureBlock(POLY_OPA_DISP++, sRupeeRomanGlyphTextures[glyph], G_IM_FMT_I, G_IM_SIZ_8b,
+                                    glyphTextureWidth, 16, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP,
+                                    G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
+
+                gSP1Quadrangle(POLY_OPA_DISP++, 0, 2, 3, 1, 0);
             }
         }
     }

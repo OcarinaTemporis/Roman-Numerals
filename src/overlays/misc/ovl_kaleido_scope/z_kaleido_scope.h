@@ -62,11 +62,21 @@ typedef enum QuestQuad {
     /* 41 */ QUEST_QUAD_SKULL_TOKENS_DIGIT1_SHADOW,
     /* 42 */ QUEST_QUAD_SKULL_TOKENS_DIGIT2_SHADOW,
     /* 43 */ QUEST_QUAD_SKULL_TOKENS_DIGIT3_SHADOW,
+    /* 44 */ QUEST_QUAD_SKULL_TOKENS_DIGIT4_SHADOW,
+    /* 45 */ QUEST_QUAD_SKULL_TOKENS_DIGIT5_SHADOW,
+    /* 46 */ QUEST_QUAD_SKULL_TOKENS_DIGIT6_SHADOW,
+    /* 47 */ QUEST_QUAD_SKULL_TOKENS_DIGIT7_SHADOW,
+    /* 48 */ QUEST_QUAD_SKULL_TOKENS_DIGIT8_SHADOW,
     // Amount of skulltula tokens
-    /* 44 */ QUEST_QUAD_SKULL_TOKENS_DIGIT1,
-    /* 45 */ QUEST_QUAD_SKULL_TOKENS_DIGIT2,
-    /* 46 */ QUEST_QUAD_SKULL_TOKENS_DIGIT3,
-    /* 47 */ QUEST_QUAD_MAX
+    /* 49 */ QUEST_QUAD_SKULL_TOKENS_DIGIT1,
+    /* 50 */ QUEST_QUAD_SKULL_TOKENS_DIGIT2,
+    /* 51 */ QUEST_QUAD_SKULL_TOKENS_DIGIT3,
+    /* 52 */ QUEST_QUAD_SKULL_TOKENS_DIGIT4,
+    /* 53 */ QUEST_QUAD_SKULL_TOKENS_DIGIT5,
+    /* 54 */ QUEST_QUAD_SKULL_TOKENS_DIGIT6,
+    /* 55 */ QUEST_QUAD_SKULL_TOKENS_DIGIT7,
+    /* 56 */ QUEST_QUAD_SKULL_TOKENS_DIGIT8,
+    /* 57 */ QUEST_QUAD_MAX
 } QuestQuad;
 
 #define EQUIP_CURSOR_X_UPG 0
@@ -223,13 +233,14 @@ typedef enum ItemQuad {
 #define UI_OVERLAY_QUAD_INFO_TEXT_TEX_HEIGHT 16
 
 typedef enum UIOverlayQuad {
-    /* 0 */ UI_OVERLAY_QUAD_INFO_BG_LEFT, // The left half of the info plate background
+    /* 0 */ UI_OVERLAY_QUAD_INFO_BG_LEFT,  // The left half of the info plate background
     /* 1 */ UI_OVERLAY_QUAD_INFO_BG_RIGHT, // The right half of the info plate background
-    /* 2 */ UI_OVERLAY_QUAD_BUTTON_LEFT, // The button for scrolling to the left page
-    /* 3 */ UI_OVERLAY_QUAD_BUTTON_RIGHT, // The button for scrolling to the right page
-    /* 4 */ UI_OVERLAY_QUAD_INFO_ICON, // The icon in the info plate
-    /* 5 */ UI_OVERLAY_QUAD_INFO_TEXT, // The text in the info plate
-    /* 6 */ UI_OVERLAY_QUAD_HAVE_ALL_GS, // On the overworld map page, the indicator that the selected area has been cleared of gold skulltulas
+    /* 2 */ UI_OVERLAY_QUAD_BUTTON_LEFT,   // The button for scrolling to the left page
+    /* 3 */ UI_OVERLAY_QUAD_BUTTON_RIGHT,  // The button for scrolling to the right page
+    /* 4 */ UI_OVERLAY_QUAD_INFO_ICON,     // The icon in the info plate
+    /* 5 */ UI_OVERLAY_QUAD_INFO_TEXT,     // The text in the info plate
+    /* 6 */ UI_OVERLAY_QUAD_HAVE_ALL_GS,   // On the overworld map page, the indicator that the selected area has been
+                                           // cleared of gold skulltulas
     /* 7 */ UI_OVERLAY_QUAD_MAX
 } UIOverlayQuad;
 
