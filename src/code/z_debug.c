@@ -322,6 +322,9 @@ void Debug_DrawText(GraphicsContext* gfxCtx) {
     Gfx* gfx;
     Gfx* opaStart;
     GfxPrint printer;
+    u16 dayTimeMinutes;
+    u16 dayTimeHours;
+    u16 dayTimeMinutesRemainder;
     s32 pad;
 
     OPEN_DISPS(gfxCtx, "../z_debug.c", 628);
@@ -341,17 +344,21 @@ void Debug_DrawText(GraphicsContext* gfxCtx) {
         Regs_DrawEditor(&printer);
     }
 #endif
-    // Draw rupee count with GfxPrint
+    // Draw Zelda time with GfxPrint
+    dayTimeMinutes = (u32)gSaveContext.save.dayTime * 1440 / 0x10000;
+    dayTimeHours = dayTimeMinutes / 60;
+    dayTimeMinutesRemainder = dayTimeMinutes % 60;
+
     GfxPrint_SetColor(&printer, 255, 255, 255, 255);
     GfxPrint_SetPos(&printer, 1, 1);
-    GfxPrint_Printf(&printer, "Arabic: %d", gSaveContext.save.info.playerData.rupees);
-    {
-        char romanRupees[16];
+    GfxPrint_Printf(&printer, "%02d:%02d", dayTimeHours, dayTimeMinutesRemainder);
+    //{
+    //   char romanRupees[16];
 
-        Debug_RupeesToRoman(gSaveContext.save.info.playerData.rupees, romanRupees);
-        GfxPrint_SetPos(&printer, 1, 2);
-        GfxPrint_Printf(&printer, "Roman: %s", romanRupees);
-    }
+    //    Debug_RupeesToRoman(gSaveContext.save.info.playerData.rupees, romanRupees);
+    //    GfxPrint_SetPos(&printer, 1, 2);
+    //    GfxPrint_Printf(&printer, "Roman: %s", romanRupees);
+    //}
     sDebugCamTextEntryCount = 0;
 
     gfx = GfxPrint_Close(&printer);

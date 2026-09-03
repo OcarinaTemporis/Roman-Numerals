@@ -2435,6 +2435,7 @@ void Message_Decode(PlayState* play) {
                         MSG_BUF_DECODED[decodedBufPos] = primaText[i];
                         decodedBufPos++;
                     }
+                    decodedBufPos--;
                 } else if (gSaveContext.save.dayTime >= CLOCK_TIME(7, 28) &&
                            gSaveContext.save.dayTime <= CLOCK_TIME(8, 24)) {
                     static const char secundaText[] = "secunda";
@@ -2445,6 +2446,18 @@ void Message_Decode(PlayState* play) {
                         MSG_BUF_DECODED[decodedBufPos] = secundaText[i];
                         decodedBufPos++;
                     }
+                    decodedBufPos--;
+                } else if (gSaveContext.save.dayTime >= CLOCK_TIME(8, 25) &&
+                           gSaveContext.save.dayTime <= CLOCK_TIME(9, 22)) {
+                    static const char tertiaText[] = "tertia";
+
+                    for (i = 0; tertiaText[i] != '\0'; i++) {
+                        Font_LoadChar(font, tertiaText[i] - ' ', charTexIdx);
+                        charTexIdx += FONT_CHAR_TEX_SIZE;
+                        MSG_BUF_DECODED[decodedBufPos] = tertiaText[i];
+                        decodedBufPos++;
+                    }
+                    decodedBufPos--;
                 } else {
                     PRINTF(T("\nゼルダ時間 ＝ ", "\nZelda time = "));
                     digits[0] = 0;
