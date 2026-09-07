@@ -3248,6 +3248,7 @@ void Interface_Draw(PlayState* play) {
     static s16 magicArrowEffectsG[] = { 0, 100, 255 };
     static s16 magicArrowEffectsB[] = { 0, 255, 100 };
     static s16 timerDigitLeftPos[] = { 16, 25, 34, 42, 51 };
+    static s16 dampeTimerDigitLeftPos[] = { 25, 34, 42 };
     static s16 sDigitWidths[] = { 9, 9, 8, 9, 9 };
     // unused, most likely colors
     static s16 D_80125B1C[][3] = {
@@ -3274,6 +3275,8 @@ void Interface_Draw(PlayState* play) {
     s16 svar3;
     s16 svar5;
     s16 timerId;
+    s16 timerDigitCount;
+    s16* timerDigitPositions;
 
     OPEN_DISPS(play->state.gfxCtx, "../z_parameter.c", 3405);
 
@@ -3984,27 +3987,37 @@ void Interface_Draw(PlayState* play) {
 
             if (((gSaveContext.timerState != TIMER_STATE_OFF) && (gSaveContext.timerState != TIMER_STATE_STOP)) ||
                 (gSaveContext.subTimerState != SUBTIMER_STATE_OFF)) {
-                sTimerDigits[0] = sTimerDigits[1] = sTimerDigits[3] = 0;
-                sTimerDigits[2] = 10; // digit 10 is used as ':' (colon)
-
-                if (gSaveContext.timerState != TIMER_STATE_OFF) {
-                    sTimerDigits[4] = gSaveContext.timerSeconds;
+                if ((play->sceneId == SCENE_GRAVEYARD) && (gSaveContext.timerState != TIMER_STATE_OFF)) {
+                    timerDigitCount = 3;
+                    timerDigitPositions = dampeTimerDigitLeftPos;
+                    sTimerDigits[0] = gSaveContext.timerSeconds / 100;
+                    sTimerDigits[1] = (gSaveContext.timerSeconds / 10) % 10;
+                    sTimerDigits[2] = gSaveContext.timerSeconds % 10;
                 } else {
-                    sTimerDigits[4] = gSaveContext.subTimerSeconds;
-                }
+                    timerDigitCount = 5;
+                    timerDigitPositions = timerDigitLeftPos;
+                    sTimerDigits[0] = sTimerDigits[1] = sTimerDigits[3] = 0;
+                    sTimerDigits[2] = 10; // digit 10 is used as ':' (colon)
 
-                while (sTimerDigits[4] >= 60) {
-                    sTimerDigits[1]++;
-                    if (sTimerDigits[1] >= 10) {
-                        sTimerDigits[0]++;
-                        sTimerDigits[1] -= 10;
+                    if (gSaveContext.timerState != TIMER_STATE_OFF) {
+                        sTimerDigits[4] = gSaveContext.timerSeconds;
+                    } else {
+                        sTimerDigits[4] = gSaveContext.subTimerSeconds;
                     }
-                    sTimerDigits[4] -= 60;
-                }
 
-                while (sTimerDigits[4] >= 10) {
-                    sTimerDigits[3]++;
-                    sTimerDigits[4] -= 10;
+                    while (sTimerDigits[4] >= 60) {
+                        sTimerDigits[1]++;
+                        if (sTimerDigits[1] >= 10) {
+                            sTimerDigits[0]++;
+                            sTimerDigits[1] -= 10;
+                        }
+                        sTimerDigits[4] -= 60;
+                    }
+
+                    while (sTimerDigits[4] >= 10) {
+                        sTimerDigits[3]++;
+                        sTimerDigits[4] -= 10;
+                    }
                 }
 
                 // Clock Icon
@@ -4036,10 +4049,10 @@ void Interface_Draw(PlayState* play) {
                     }
                 }
 
-                for (svar1 = 0; svar1 < ARRAY_COUNT(sTimerDigits); svar1++) {
+                for (svar1 = 0; svar1 < timerDigitCount; svar1++) {
                     OVERLAY_DISP =
                         Gfx_TextureI8(OVERLAY_DISP, ((u8*)gCounterDigit0Tex + (8 * 16 * sTimerDigits[svar1])), 8, 16,
-                                      ((void)0, gSaveContext.timerX[timerId]) + timerDigitLeftPos[svar1],
+                                      ((void)0, gSaveContext.timerX[timerId]) + timerDigitPositions[svar1],
                                       ((void)0, gSaveContext.timerY[timerId]), sDigitWidths[svar1], VREG(42),
                                       VREG(43) << 1, VREG(43) << 1);
                 }

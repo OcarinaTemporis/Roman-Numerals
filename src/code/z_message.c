@@ -2426,7 +2426,7 @@ void Message_Decode(PlayState* play) {
                         break;
                 }
             } else if (curChar == MESSAGE_TIME) {
-                if (gSaveContext.save.dayTime >= CLOCK_TIME(6, 30) && gSaveContext.save.dayTime <= CLOCK_TIME(7, 27)) {
+                if (gSaveContext.save.dayTime >= CLOCK_TIME(6, 30) && gSaveContext.save.dayTime <= CLOCK_TIME(7, 28)) {
                     static const char primaText[] = "prima";
 
                     for (i = 0; primaText[i] != '\0'; i++) {
@@ -2437,7 +2437,7 @@ void Message_Decode(PlayState* play) {
                     }
                     decodedBufPos--;
                 } else if (gSaveContext.save.dayTime >= CLOCK_TIME(7, 28) &&
-                           gSaveContext.save.dayTime <= CLOCK_TIME(8, 24)) {
+                           gSaveContext.save.dayTime <= CLOCK_TIME(8, 25)) {
                     static const char secundaText[] = "secunda";
 
                     for (i = 0; secundaText[i] != '\0'; i++) {
@@ -2448,7 +2448,7 @@ void Message_Decode(PlayState* play) {
                     }
                     decodedBufPos--;
                 } else if (gSaveContext.save.dayTime >= CLOCK_TIME(8, 25) &&
-                           gSaveContext.save.dayTime <= CLOCK_TIME(9, 22)) {
+                           gSaveContext.save.dayTime <= CLOCK_TIME(9, 23)) {
                     static const char tertiaText[] = "tertia";
 
                     for (i = 0; tertiaText[i] != '\0'; i++) {
@@ -2456,6 +2456,274 @@ void Message_Decode(PlayState* play) {
                         charTexIdx += FONT_CHAR_TEX_SIZE;
                         MSG_BUF_DECODED[decodedBufPos] = tertiaText[i];
                         decodedBufPos++;
+                    }
+                    decodedBufPos--;
+                } else if (gSaveContext.save.dayTime >= CLOCK_TIME(9, 23) &&
+                           gSaveContext.save.dayTime <= CLOCK_TIME(10, 20)) {
+                    static const char quartaText[] = "quarta";
+
+                    for (i = 0; quartaText[i] != '\0'; i++) {
+                        Font_LoadChar(font, quartaText[i] - ' ', charTexIdx);
+                        charTexIdx += FONT_CHAR_TEX_SIZE;
+                        MSG_BUF_DECODED[decodedBufPos] = quartaText[i];
+                        decodedBufPos++;
+                    }
+                    decodedBufPos--;
+                } else if (gSaveContext.save.dayTime >= CLOCK_TIME(10, 20) &&
+                           gSaveContext.save.dayTime <= CLOCK_TIME(11, 18)) {
+                    static const char quintaText[] = "quinta";
+
+                    for (i = 0; quintaText[i] != '\0'; i++) {
+                        Font_LoadChar(font, quintaText[i] - ' ', charTexIdx);
+                        charTexIdx += FONT_CHAR_TEX_SIZE;
+                        MSG_BUF_DECODED[decodedBufPos] = quintaText[i];
+                        decodedBufPos++;
+                    }
+                    decodedBufPos--;
+                } else if (gSaveContext.save.dayTime >= CLOCK_TIME(11, 18) &&
+                           gSaveContext.save.dayTime <= CLOCK_TIME(12, 15)) {
+                    static const char sextaText[] = "sexta";
+
+                    for (i = 0; sextaText[i] != '\0'; i++) {
+                        Font_LoadChar(font, sextaText[i] - ' ', charTexIdx);
+                        charTexIdx += FONT_CHAR_TEX_SIZE;
+                        MSG_BUF_DECODED[decodedBufPos] = sextaText[i];
+                        decodedBufPos++;
+                    }
+                    decodedBufPos--;
+                } else if (gSaveContext.save.dayTime >= CLOCK_TIME(12, 15) &&
+                           gSaveContext.save.dayTime <= CLOCK_TIME(13, 13)) {
+                    static const char septimaText[] = "septima";
+
+                    for (i = 0; septimaText[i] != '\0'; i++) {
+                        Font_LoadChar(font, septimaText[i] - ' ', charTexIdx);
+                        charTexIdx += FONT_CHAR_TEX_SIZE;
+                        MSG_BUF_DECODED[decodedBufPos] = septimaText[i];
+                        decodedBufPos++;
+                    }
+                    decodedBufPos--;
+                } else if (gSaveContext.save.dayTime >= CLOCK_TIME(13, 13) &&
+                           gSaveContext.save.dayTime <= CLOCK_TIME(14, 10)) {
+                    static const char octavaText[] = "octava";
+
+                    for (i = 0; octavaText[i] != '\0'; i++) {
+                        Font_LoadChar(font, octavaText[i] - ' ', charTexIdx);
+                        charTexIdx += FONT_CHAR_TEX_SIZE;
+                        MSG_BUF_DECODED[decodedBufPos] = octavaText[i];
+                        decodedBufPos++;
+                    }
+                    decodedBufPos--;
+                } else if (gSaveContext.save.dayTime >= CLOCK_TIME(14, 10) &&
+                           gSaveContext.save.dayTime <= CLOCK_TIME(15, 8)) {
+                    static const char nonaText[] = "nona";
+
+                    for (i = 0; nonaText[i] != '\0'; i++) {
+                        Font_LoadChar(font, nonaText[i] - ' ', charTexIdx);
+                        charTexIdx += FONT_CHAR_TEX_SIZE;
+                        MSG_BUF_DECODED[decodedBufPos] = nonaText[i];
+                        decodedBufPos++;
+                    }
+                    decodedBufPos--;
+                } else if (gSaveContext.save.dayTime >= CLOCK_TIME(15, 8) &&
+                           gSaveContext.save.dayTime <= CLOCK_TIME(16, 5)) {
+                    static const char decimaText[] = "decima";
+
+                    for (i = 0; decimaText[i] != '\0'; i++) {
+                        Font_LoadChar(font, decimaText[i] - ' ', charTexIdx);
+                        charTexIdx += FONT_CHAR_TEX_SIZE;
+                        MSG_BUF_DECODED[decodedBufPos] = decimaText[i];
+                        decodedBufPos++;
+                    }
+                    decodedBufPos--;
+                } else if (gSaveContext.save.dayTime >= CLOCK_TIME(16, 5) &&
+                           gSaveContext.save.dayTime <= CLOCK_TIME(17, 3)) {
+                    static const char undecimaText[] = "undecima";
+
+                    for (i = 0; undecimaText[i] != '\0'; i++) {
+                        Font_LoadChar(font, undecimaText[i] - ' ', charTexIdx);
+                        charTexIdx += FONT_CHAR_TEX_SIZE;
+                        MSG_BUF_DECODED[decodedBufPos] = undecimaText[i];
+                        decodedBufPos++;
+                    }
+                    decodedBufPos--;
+                } else if (gSaveContext.save.dayTime >= CLOCK_TIME(17, 3) &&
+                           gSaveContext.save.dayTime <= CLOCK_TIME(18, 0)) {
+                    static const char duodecimaText[] = "duodecima";
+
+                    for (i = 0; duodecimaText[i] != '\0'; i++) {
+                        Font_LoadChar(font, duodecimaText[i] - ' ', charTexIdx);
+                        charTexIdx += FONT_CHAR_TEX_SIZE;
+                        MSG_BUF_DECODED[decodedBufPos] = duodecimaText[i];
+                        decodedBufPos++;
+                    }
+                    decodedBufPos--;
+                } else if (gSaveContext.save.dayTime >= CLOCK_TIME(18, 0) &&
+                           gSaveContext.save.dayTime <= CLOCK_TIME(19, 3)) {
+                    static const char primanocText[] = "prima noctis";
+
+                    for (i = 0; primanocText[i] != '\0'; i++) {
+                        MSG_BUF_DECODED[decodedBufPos] = primanocText[i];
+                        decodedBufPos++;
+                        if (primanocText[i] != ' ') {
+                            Font_LoadChar(font, primanocText[i] - ' ', charTexIdx);
+                            charTexIdx += FONT_CHAR_TEX_SIZE;
+                        }
+                    }
+                    decodedBufPos--;
+                } else if (gSaveContext.save.dayTime >= CLOCK_TIME(19, 3) &&
+                           gSaveContext.save.dayTime <= CLOCK_TIME(20, 5)) {
+                    static const char secundanocText[] = "secunda noctis";
+
+                    for (i = 0; secundanocText[i] != '\0'; i++) {
+                        MSG_BUF_DECODED[decodedBufPos] = secundanocText[i];
+                        decodedBufPos++;
+                        if (secundanocText[i] != ' ') {
+                            Font_LoadChar(font, secundanocText[i] - ' ', charTexIdx);
+                            charTexIdx += FONT_CHAR_TEX_SIZE;
+                        }
+                    }
+                    decodedBufPos--;
+                } else if (gSaveContext.save.dayTime >= CLOCK_TIME(20, 5) &&
+                           gSaveContext.save.dayTime <= CLOCK_TIME(21, 8)) {
+                    static const char tertianocText[] = "tertia noctis";
+
+                    for (i = 0; tertianocText[i] != '\0'; i++) {
+                        MSG_BUF_DECODED[decodedBufPos] = tertianocText[i];
+                        decodedBufPos++;
+                        if (tertianocText[i] != ' ') {
+                            Font_LoadChar(font, tertianocText[i] - ' ', charTexIdx);
+                            charTexIdx += FONT_CHAR_TEX_SIZE;
+                        }
+                    }
+                    decodedBufPos--;
+                } else if (gSaveContext.save.dayTime >= CLOCK_TIME(21, 8) &&
+                           gSaveContext.save.dayTime <= CLOCK_TIME(22, 10)) {
+                    static const char quartanocText[] = "quarta noctis";
+
+                    for (i = 0; quartanocText[i] != '\0'; i++) {
+                        MSG_BUF_DECODED[decodedBufPos] = quartanocText[i];
+                        decodedBufPos++;
+                        if (quartanocText[i] != ' ') {
+                            Font_LoadChar(font, quartanocText[i] - ' ', charTexIdx);
+                            charTexIdx += FONT_CHAR_TEX_SIZE;
+                        }
+                    }
+                    decodedBufPos--;
+                } else if (gSaveContext.save.dayTime >= CLOCK_TIME(22, 10) &&
+                           gSaveContext.save.dayTime <= CLOCK_TIME(23, 13)) {
+                    static const char quintanocText[] = "quinta noctis";
+
+                    for (i = 0; quintanocText[i] != '\0'; i++) {
+                        MSG_BUF_DECODED[decodedBufPos] = quintanocText[i];
+                        decodedBufPos++;
+                        if (quintanocText[i] != ' ') {
+                            Font_LoadChar(font, quintanocText[i] - ' ', charTexIdx);
+                            charTexIdx += FONT_CHAR_TEX_SIZE;
+                        }
+                    }
+                    decodedBufPos--;
+                } else if (gSaveContext.save.dayTime >= CLOCK_TIME(23, 13) &&
+                           gSaveContext.save.dayTime <= CLOCK_TIME(23, 59)) {
+                    static const char sextanocText[] = "sexta noctis";
+
+                    for (i = 0; sextanocText[i] != '\0'; i++) {
+                        MSG_BUF_DECODED[decodedBufPos] = sextanocText[i];
+                        decodedBufPos++;
+                        if (sextanocText[i] != ' ') {
+                            Font_LoadChar(font, sextanocText[i] - ' ', charTexIdx);
+                            charTexIdx += FONT_CHAR_TEX_SIZE;
+                        }
+                    }
+                    decodedBufPos--;
+                } else if (gSaveContext.save.dayTime >= CLOCK_TIME(0, 0) &&
+                           gSaveContext.save.dayTime <= CLOCK_TIME(0, 15)) {
+                    static const char sextanocText[] = "sexta noctis";
+
+                    for (i = 0; sextanocText[i] != '\0'; i++) {
+                        MSG_BUF_DECODED[decodedBufPos] = sextanocText[i];
+                        decodedBufPos++;
+                        if (sextanocText[i] != ' ') {
+                            Font_LoadChar(font, sextanocText[i] - ' ', charTexIdx);
+                            charTexIdx += FONT_CHAR_TEX_SIZE;
+                        }
+                    }
+                    decodedBufPos--;
+                } else if (gSaveContext.save.dayTime >= CLOCK_TIME(0, 15) &&
+                           gSaveContext.save.dayTime <= CLOCK_TIME(1, 18)) {
+                    static const char septimanocText[] = "septima noctis";
+
+                    for (i = 0; septimanocText[i] != '\0'; i++) {
+                        MSG_BUF_DECODED[decodedBufPos] = septimanocText[i];
+                        decodedBufPos++;
+                        if (septimanocText[i] != ' ') {
+                            Font_LoadChar(font, septimanocText[i] - ' ', charTexIdx);
+                            charTexIdx += FONT_CHAR_TEX_SIZE;
+                        }
+                    }
+                    decodedBufPos--;
+                } else if (gSaveContext.save.dayTime >= CLOCK_TIME(1, 18) &&
+                           gSaveContext.save.dayTime <= CLOCK_TIME(2, 20)) {
+                    static const char octavanocText[] = "octava noctis";
+
+                    for (i = 0; octavanocText[i] != '\0'; i++) {
+                        MSG_BUF_DECODED[decodedBufPos] = octavanocText[i];
+                        decodedBufPos++;
+                        if (octavanocText[i] != ' ') {
+                            Font_LoadChar(font, octavanocText[i] - ' ', charTexIdx);
+                            charTexIdx += FONT_CHAR_TEX_SIZE;
+                        }
+                    }
+                    decodedBufPos--;
+                } else if (gSaveContext.save.dayTime >= CLOCK_TIME(2, 20) &&
+                           gSaveContext.save.dayTime <= CLOCK_TIME(3, 23)) {
+                    static const char nonanocText[] = "nona noctis";
+
+                    for (i = 0; nonanocText[i] != '\0'; i++) {
+                        MSG_BUF_DECODED[decodedBufPos] = nonanocText[i];
+                        decodedBufPos++;
+                        if (nonanocText[i] != ' ') {
+                            Font_LoadChar(font, nonanocText[i] - ' ', charTexIdx);
+                            charTexIdx += FONT_CHAR_TEX_SIZE;
+                        }
+                    }
+                    decodedBufPos--;
+                } else if (gSaveContext.save.dayTime >= CLOCK_TIME(3, 23) &&
+                           gSaveContext.save.dayTime <= CLOCK_TIME(4, 25)) {
+                    static const char decimanocText[] = "decima noctis";
+
+                    for (i = 0; decimanocText[i] != '\0'; i++) {
+                        MSG_BUF_DECODED[decodedBufPos] = decimanocText[i];
+                        decodedBufPos++;
+                        if (decimanocText[i] != ' ') {
+                            Font_LoadChar(font, decimanocText[i] - ' ', charTexIdx);
+                            charTexIdx += FONT_CHAR_TEX_SIZE;
+                        }
+                    }
+                    decodedBufPos--;
+                } else if (gSaveContext.save.dayTime >= CLOCK_TIME(4, 25) &&
+                           gSaveContext.save.dayTime <= CLOCK_TIME(5, 28)) {
+                    static const char undecimanocText[] = "undecima noctis";
+
+                    for (i = 0; undecimanocText[i] != '\0'; i++) {
+                        MSG_BUF_DECODED[decodedBufPos] = undecimanocText[i];
+                        decodedBufPos++;
+                        if (undecimanocText[i] != ' ') {
+                            Font_LoadChar(font, undecimanocText[i] - ' ', charTexIdx);
+                            charTexIdx += FONT_CHAR_TEX_SIZE;
+                        }
+                    }
+                    decodedBufPos--;
+                } else if (gSaveContext.save.dayTime >= CLOCK_TIME(5, 28) &&
+                           gSaveContext.save.dayTime <= CLOCK_TIME(6, 30)) {
+                    static const char duodecimanocText[] = "duodecima noctis";
+
+                    for (i = 0; duodecimanocText[i] != '\0'; i++) {
+                        MSG_BUF_DECODED[decodedBufPos] = duodecimanocText[i];
+                        decodedBufPos++;
+                        if (duodecimanocText[i] != ' ') {
+                            Font_LoadChar(font, duodecimanocText[i] - ' ', charTexIdx);
+                            charTexIdx += FONT_CHAR_TEX_SIZE;
+                        }
                     }
                     decodedBufPos--;
                 } else {
