@@ -2220,77 +2220,104 @@ void Message_Decode(PlayState* play) {
                     decodedBufPos++;
                 }
                 decodedBufPos--;
-            } else if (curChar == MESSAGE_MARATHON_TIME || curChar == MESSAGE_RACE_TIME) {
+            } else if (curChar == MESSAGE_RACE_TIME) {
+                // Convert the race timer to Roman numeral glyphs and add them to the decoded buffer.
+                u8 romanGlyphs[ROMAN_NUMERAL_MAX_GLYPHS];
+                s32 romanGlyphCount;
+                static const u8 sRomanNumeralGlyphChars[ROMAN_NUMERAL_GLYPH_MAX] = {
+                    'I', 'V', 'X', 'L', 'C', 'D', 'M',
+                };
+
+                romanGlyphCount =
+                    RomanNumerals_Format(gSaveContext.timerSeconds, romanGlyphs, ARRAY_COUNT(romanGlyphs));
+
+                for (i = 0; i < romanGlyphCount; i++) {
+                    u8 romanChar = sRomanNumeralGlyphChars[romanGlyphs[i]];
+
+                    Font_LoadChar(font, romanChar - ' ', charTexIdx);
+                    charTexIdx += FONT_CHAR_TEX_SIZE;
+                    MSG_BUF_DECODED[decodedBufPos] = romanChar;
+                    decodedBufPos++;
+                }
+                decodedBufPos--;
+            } else if (curChar == MESSAGE_MARATHON_TIME) {
+                u8 romanGlyphs[ROMAN_NUMERAL_MAX_GLYPHS];
+                s32 romanGlyphCount;
+                static const u8 sRomanNumeralGlyphChars[ROMAN_NUMERAL_GLYPH_MAX] = {
+                    'I', 'V', 'X', 'L', 'C', 'D', 'M',
+                };
+
+                romanGlyphCount =
+                    RomanNumerals_Format(gSaveContext.subTimerSeconds, romanGlyphs, ARRAY_COUNT(romanGlyphs));
+
+                for (i = 0; i < romanGlyphCount; i++) {
+                    u8 romanChar = sRomanNumeralGlyphChars[romanGlyphs[i]];
+
+                    Font_LoadChar(font, romanChar - ' ', charTexIdx);
+                    charTexIdx += FONT_CHAR_TEX_SIZE;
+                    MSG_BUF_DECODED[decodedBufPos] = romanChar;
+                    decodedBufPos++;
+                }
+                decodedBufPos--;
+
                 // Convert the values of the appropriate timer to digits and add the
                 //  digits to the decoded buffer in place of the control character.
-                PRINTF(T("\nＥＶＥＮＴタイマー ＝ ", "\nEVENT timer = "));
-                digits[0] = digits[1] = digits[2] = 0;
-                if (curChar == MESSAGE_RACE_TIME) {
-                    digits[3] = gSaveContext.timerSeconds;
-                } else {
-                    digits[3] = gSaveContext.subTimerSeconds;
-                }
+                // PRINTF(T("\nＥＶＥＮＴタイマー ＝ ", "\nEVENT timer = "));
+                // digits[0] = digits[1] = digits[2] = 0;
+                // if (curChar == MESSAGE_RACE_TIME) {
+                //    digits[3] = gSaveContext.timerSeconds;
+                //} else {
+                //    digits[3] = gSaveContext.subTimerSeconds;
+                //}
 
-                while (digits[3] >= 60) {
-                    digits[1]++;
-                    if (digits[1] >= 10) {
-                        digits[0]++;
-                        digits[1] -= 10;
-                    }
-                    digits[3] -= 60;
-                }
-                while (digits[3] >= 10) {
-                    digits[2]++;
-                    digits[3] -= 10;
-                }
+                // while (digits[3] >= 60) {
+                //     digits[1]++;
+                //     if (digits[1] >= 10) {
+                //         digits[0]++;
+                //         digits[1] -= 10;
+                //     }
+                //     digits[3] -= 60;
+                // }
+                // while (digits[3] >= 10) {
+                //     digits[2]++;
+                //     digits[3] -= 10;
+                // }
 
-                for (i = 0; i < 4; i++) {
-                    Font_LoadChar(font, digits[i] + '0' - ' ', charTexIdx);
-                    charTexIdx += FONT_CHAR_TEX_SIZE;
-                    MSG_BUF_DECODED[decodedBufPos] = digits[i] + '0';
-                    decodedBufPos++;
-                    if (i == 1) {
-                        Font_LoadChar(font, '"' - ' ', charTexIdx);
-                        charTexIdx += FONT_CHAR_TEX_SIZE;
-                        MSG_BUF_DECODED[decodedBufPos] = '"';
-                        decodedBufPos++;
-                    } else if (i == 3) {
-                        Font_LoadChar(font, '"' - ' ', charTexIdx);
-                        charTexIdx += FONT_CHAR_TEX_SIZE;
-                        MSG_BUF_DECODED[decodedBufPos] = '"';
-                    }
-                }
+                // for (i = 0; i < 4; i++) {
+                //     Font_LoadChar(font, digits[i] + '0' - ' ', charTexIdx);
+                //     charTexIdx += FONT_CHAR_TEX_SIZE;
+                //    MSG_BUF_DECODED[decodedBufPos] = digits[i] + '0';
+                //     decodedBufPos++;
+                //     if (i == 1) {
+                //         Font_LoadChar(font, '"' - ' ', charTexIdx);
+                //        charTexIdx += FONT_CHAR_TEX_SIZE;
+                //        MSG_BUF_DECODED[decodedBufPos] = '"';
+                //        decodedBufPos++;
+                //    } else if (i == 3) {
+                //        Font_LoadChar(font, '"' - ' ', charTexIdx);
+                //        charTexIdx += FONT_CHAR_TEX_SIZE;
+                //        MSG_BUF_DECODED[decodedBufPos] = '"';
+                //   }
+                // }
             } else if (curChar == MESSAGE_POINTS) {
                 // Convert the values of the current minigame score to digits and
                 //  add the digits to the decoded buffer in place of the control character.
-                PRINTF(T("\n流鏑馬スコア ＝ %d\n", "\nHorseback archery score = %d\n"), gSaveContext.minigameScore);
-                digits[0] = digits[1] = digits[2] = 0;
-                digits[3] = gSaveContext.minigameScore;
+                u8 romanGlyphs[ROMAN_NUMERAL_MAX_GLYPHS];
+                s32 romanGlyphCount;
+                static const u8 sRomanNumeralGlyphChars[ROMAN_NUMERAL_GLYPH_MAX] = {
+                    'I', 'V', 'X', 'L', 'C', 'D', 'M',
+                };
 
-                while (digits[3] >= 1000) {
-                    digits[0]++;
-                    digits[3] -= 1000;
-                }
-                while (digits[3] >= 100) {
-                    digits[1]++;
-                    digits[3] -= 100;
-                }
-                while (digits[3] >= 10) {
-                    digits[2]++;
-                    digits[3] -= 10;
-                }
+                romanGlyphCount =
+                    RomanNumerals_Format(gSaveContext.minigameScore, romanGlyphs, ARRAY_COUNT(romanGlyphs));
 
-                loadChar = false;
-                for (i = 0; i < 4; i++) {
-                    if (i == 3 || digits[i] != 0) {
-                        loadChar = true;
-                    }
-                    if (loadChar) {
-                        Font_LoadChar(font, digits[i] + '0' - ' ', charTexIdx);
-                        MSG_BUF_DECODED[decodedBufPos] = digits[i] + '0';
-                        charTexIdx += FONT_CHAR_TEX_SIZE;
-                        decodedBufPos++;
-                    }
+                for (i = 0; i < romanGlyphCount; i++) {
+                    u8 romanChar = sRomanNumeralGlyphChars[romanGlyphs[i]];
+
+                    Font_LoadChar(font, romanChar - ' ', charTexIdx);
+                    charTexIdx += FONT_CHAR_TEX_SIZE;
+                    MSG_BUF_DECODED[decodedBufPos] = romanChar;
+                    decodedBufPos++;
                 }
                 decodedBufPos--;
             } else if (curChar == MESSAGE_TOKENS) {
@@ -2366,7 +2393,8 @@ void Message_Decode(PlayState* play) {
                 switch (MSG_BUF[msgCtx->msgBufPos] & 0xFF) {
                     case HS_HBA:
                     case HS_POE_POINTS:
-                    case HS_FISHING: {
+                    case HS_FISHING:
+                    case HS_MARATHON: {
                         u8 romanGlyphs[ROMAN_NUMERAL_MAX_GLYPHS];
                         s32 romanGlyphCount;
                         static const u8 sRomanNumeralGlyphChars[ROMAN_NUMERAL_GLYPH_MAX] = {
@@ -2389,7 +2417,7 @@ void Message_Decode(PlayState* play) {
                     case HS_UNK_05:
                         break;
                     case HS_HORSE_RACE:
-                    case HS_MARATHON:
+                    // case HS_MARATHON:
                     case HS_DAMPE_RACE:
                         digits[0] = digits[1] = digits[2] = 0;
                         digits[3] = value;
