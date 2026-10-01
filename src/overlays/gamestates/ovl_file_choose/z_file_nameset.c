@@ -65,6 +65,8 @@ s16 D_80812544[] = {
 
 #endif
 
+static void FileSelect_SetEnglishKeyboardVtx(FileSelectState* this);
+
 void FileSelect_SetKeyboardVtx(GameState* thisx) {
     FileSelectState* this = (FileSelectState*)thisx;
     s16 phi_t2;
@@ -75,6 +77,11 @@ void FileSelect_SetKeyboardVtx(GameState* thisx) {
     s16 phi_s2;
 
     this->keyboardVtx = GRAPH_ALLOC(this->state.gfxCtx, sizeof(Vtx) * 4 * 5 * 13);
+
+    if (this->charPage == FS_CHAR_PAGE_ENG) {
+        FileSelect_SetEnglishKeyboardVtx(this);
+        return;
+    }
 
     phi_s1 = 0x26;
 
@@ -185,6 +192,123 @@ static s16 D_808125EC[] = {
 static s16 D_80812604[] = {
     0x0048, 0x0045, 0x0045, 0x0045, 0x0045, 0x0045, 0x0045, 0x0045, 0x0045, 0x0045, 0x0045,
 };
+
+static s16 sEnglishKeyboard[5][13] = {
+    {
+        FILENAME_UPPERCASE('A'),
+        FILENAME_UPPERCASE('B'),
+        FILENAME_UPPERCASE('C'),
+        FILENAME_UPPERCASE('D'),
+        FILENAME_UPPERCASE('E'),
+        FILENAME_UPPERCASE('F'),
+        FILENAME_UPPERCASE('G'),
+        FILENAME_UPPERCASE('H'),
+        FILENAME_UPPERCASE('I'),
+        FILENAME_UPPERCASE('K'),
+        FILENAME_UPPERCASE('L'),
+        FILENAME_UPPERCASE('M'),
+        FILENAME_SPACE,
+    },
+    {
+        FILENAME_UPPERCASE('N'),
+        FILENAME_UPPERCASE('O'),
+        FILENAME_UPPERCASE('P'),
+        FILENAME_UPPERCASE('Q'),
+        FILENAME_UPPERCASE('R'),
+        FILENAME_UPPERCASE('S'),
+        FILENAME_UPPERCASE('T'),
+        FILENAME_UPPERCASE('U'),
+        FILENAME_UPPERCASE('V'),
+        FILENAME_UPPERCASE('X'),
+        FILENAME_UPPERCASE('Y'),
+        FILENAME_UPPERCASE('Z'),
+        FILENAME_SPACE,
+    },
+    {
+        FILENAME_LOWERCASE('a'),
+        FILENAME_LOWERCASE('b'),
+        FILENAME_LOWERCASE('c'),
+        FILENAME_LOWERCASE('d'),
+        FILENAME_LOWERCASE('e'),
+        FILENAME_LOWERCASE('f'),
+        FILENAME_LOWERCASE('g'),
+        FILENAME_LOWERCASE('h'),
+        FILENAME_LOWERCASE('i'),
+        FILENAME_LOWERCASE('k'),
+        FILENAME_LOWERCASE('l'),
+        FILENAME_LOWERCASE('m'),
+        FILENAME_SPACE,
+    },
+    {
+        FILENAME_LOWERCASE('n'),
+        FILENAME_LOWERCASE('o'),
+        FILENAME_LOWERCASE('p'),
+        FILENAME_LOWERCASE('q'),
+        FILENAME_LOWERCASE('r'),
+        FILENAME_LOWERCASE('s'),
+        FILENAME_LOWERCASE('t'),
+        FILENAME_LOWERCASE('u'),
+        FILENAME_LOWERCASE('v'),
+        FILENAME_LOWERCASE('x'),
+        FILENAME_LOWERCASE('y'),
+        FILENAME_LOWERCASE('z'),
+        FILENAME_SPACE,
+    },
+    {
+        FILENAME_PERIOD,
+        FILENAME_DASH,
+        FILENAME_SPACE,
+        FILENAME_SPACE,
+        FILENAME_SPACE,
+        FILENAME_SPACE,
+        FILENAME_SPACE,
+        FILENAME_SPACE,
+        FILENAME_SPACE,
+        FILENAME_SPACE,
+        FILENAME_SPACE,
+        FILENAME_SPACE,
+        FILENAME_SPACE,
+    },
+};
+
+static s16 sEnglishKeyboardRowLengths[] = { 12, 12, 12, 12, 2 };
+static s16 sEnglishKeyboardRowStartX[] = { -0x58, -0x58, -0x58, -0x58, -0x08 };
+
+static s16 FileSelect_GetEnglishKeyboardCharacter(s16 charIndex) {
+    return sEnglishKeyboard[charIndex / 13][charIndex % 13];
+}
+
+static void FileSelect_SetEnglishKeyboardVtx(FileSelectState* this) {
+    s16 row;
+    s16 column;
+    s16 x;
+    s16 y;
+    Vtx* vtx;
+
+    for (row = 0; row < 5; row++) {
+        y = 0x26 - row * 0x10;
+
+        for (column = 0; column < 13; column++) {
+            x = sEnglishKeyboardRowStartX[row] + column * 0x10;
+            vtx = &this->keyboardVtx[(row * 13 + column) * 4];
+
+            vtx[0].v.ob[0] = vtx[2].v.ob[0] = x;
+            vtx[1].v.ob[0] = vtx[3].v.ob[0] = x + 12;
+            vtx[0].v.ob[1] = vtx[1].v.ob[1] = y;
+            vtx[2].v.ob[1] = vtx[3].v.ob[1] = y - 12;
+
+            vtx[0].v.ob[2] = vtx[1].v.ob[2] = vtx[2].v.ob[2] = vtx[3].v.ob[2] = 0;
+            vtx[0].v.flag = vtx[1].v.flag = vtx[2].v.flag = vtx[3].v.flag = 0;
+
+            vtx[0].v.tc[0] = vtx[0].v.tc[1] = vtx[1].v.tc[1] = vtx[2].v.tc[0] = 0;
+            vtx[1].v.tc[0] = vtx[2].v.tc[1] = vtx[3].v.tc[0] = vtx[3].v.tc[1] = 0x200;
+
+            vtx[0].v.cn[0] = vtx[1].v.cn[0] = vtx[2].v.cn[0] = vtx[3].v.cn[0] = vtx[0].v.cn[1] = vtx[1].v.cn[1] =
+                vtx[2].v.cn[1] = vtx[3].v.cn[1] = vtx[0].v.cn[2] = vtx[1].v.cn[2] = vtx[2].v.cn[2] = vtx[3].v.cn[2] =
+                    vtx[0].v.cn[3] = vtx[1].v.cn[3] = vtx[2].v.cn[3] = vtx[3].v.cn[3] = 255;
+        }
+    }
+}
 
 /**
  * Set vertices used by all elements of the name entry screen that are NOT the keyboard.
@@ -352,6 +476,38 @@ void FileSelect_SetNameEntryVtx(GameState* thisx) {
     CLOSE_DISPS(this->state.gfxCtx, "../z_file_nameset_PAL.c", 307);
 }
 
+static void FileSelect_DrawEnglishKeyboard(FileSelectState* this) {
+    Font* font = &this->font;
+    s16 row;
+    s16 column;
+    s16 count;
+    s16 end;
+
+    OPEN_DISPS(this->state.gfxCtx, "../z_file_nameset_PAL.c", 430);
+
+    for (row = 0; row < 5; row++) {
+        for (column = 0; column < sEnglishKeyboardRowLengths[row]; column += 8) {
+            end = column + 8;
+            if (end > sEnglishKeyboardRowLengths[row]) {
+                end = sEnglishKeyboardRowLengths[row];
+            }
+
+            count = end - column;
+            gSPVertex(POLY_OPA_DISP++, &this->keyboardVtx[(row * 13 + column) * 4], count * 4, 0);
+
+            for (end = 0; end < count; end++) {
+                FileSelect_DrawCharacter(this->state.gfxCtx,
+                                         font->fontBuf +
+                                             FileSelect_GetEnglishKeyboardCharacter(row * 13 + column + end) *
+                                                 FONT_CHAR_TEX_SIZE,
+                                         end * 4);
+            }
+        }
+    }
+
+    CLOSE_DISPS(this->state.gfxCtx, "../z_file_nameset_PAL.c", 456);
+}
+
 void FileSelect_DrawKeyboard(GameState* thisx) {
     FileSelectState* this = (FileSelectState*)thisx;
     Font* font = &this->font;
@@ -369,6 +525,11 @@ void FileSelect_DrawKeyboard(GameState* thisx) {
     gDPSetCombineLERP(POLY_OPA_DISP++, 0, 0, 0, PRIMITIVE, TEXEL1, TEXEL0, PRIM_LOD_FRAC, TEXEL0, 0, 0, 0, COMBINED, 0,
                       0, 0, COMBINED);
     gDPSetPrimColor(POLY_OPA_DISP++, 0, this->charBgAlpha, 255, 255, 255, 255);
+
+    if (this->charPage == FS_CHAR_PAGE_ENG) {
+        FileSelect_DrawEnglishKeyboard(this);
+        goto draw_keyboard_done;
+    }
 
 #if OOT_NTSC
     if (this->charPage == FS_CHAR_PAGE_HIRA || this->charPage == FS_CHAR_PAGE_HIRA_TO_KATA ||
@@ -475,6 +636,7 @@ void FileSelect_DrawKeyboard(GameState* thisx) {
     FileSelect_DrawCharacter(this->state.gfxCtx, font->fontBuf + gCharPageEng[i] * FONT_CHAR_TEX_SIZE, 0);
 #endif
 
+draw_keyboard_done:
     CLOSE_DISPS(this->state.gfxCtx, "../z_file_nameset_PAL.c", 347);
 }
 
@@ -604,8 +766,13 @@ void FileSelect_DrawNameEntry(GameState* thisx) {
         this->nameEntryVtx[40].v.ob[0] = this->nameEntryVtx[42].v.ob[0] =
             this->keyboardVtx[this->charIndex * 4].v.ob[0] - 6;
 #else
-        this->nameEntryVtx[40].v.ob[0] = this->nameEntryVtx[42].v.ob[0] =
-            this->keyboardVtx[this->charIndex * 4].v.ob[0] - D_80812544[this->charIndex] - 6;
+        if (this->charPage == FS_CHAR_PAGE_ENG) {
+            this->nameEntryVtx[40].v.ob[0] = this->nameEntryVtx[42].v.ob[0] =
+                this->keyboardVtx[this->charIndex * 4].v.ob[0] - 6;
+        } else {
+            this->nameEntryVtx[40].v.ob[0] = this->nameEntryVtx[42].v.ob[0] =
+                this->keyboardVtx[this->charIndex * 4].v.ob[0] - D_80812544[this->charIndex] - 6;
+        }
 #endif
         this->nameEntryVtx[41].v.ob[0] = this->nameEntryVtx[43].v.ob[0] = this->nameEntryVtx[40].v.ob[0] + 24;
         this->nameEntryVtx[40].v.ob[1] = this->nameEntryVtx[41].v.ob[1] =
@@ -733,12 +900,15 @@ void FileSelect_DrawNameEntry(GameState* thisx) {
                         gSPVertex(POLY_OPA_DISP++, &this->keyboardVtx[this->charIndex * 4], 4, 0);
 
                         FileSelect_DrawCharacter(this->state.gfxCtx,
-                                                 font->fontBuf + gCharPageEng[this->charIndex] * FONT_CHAR_TEX_SIZE, 0);
+                                                 font->fontBuf +
+                                                     FileSelect_GetEnglishKeyboardCharacter(this->charIndex) *
+                                                         FONT_CHAR_TEX_SIZE,
+                                                 0);
 
                         if (CHECK_BTN_ALL(input->press.button, BTN_A)) {
                             SFX_PLAY_CENTERED(NA_SE_SY_FSEL_DECIDE_S);
                             this->fileNames[this->buttonIndex][this->newFileNameCharCount] =
-                                gCharPageEng[this->charIndex];
+                                FileSelect_GetEnglishKeyboardCharacter(this->charIndex);
                             this->newFileNameCharCount++;
 
                             if (this->newFileNameCharCount > 7) {
@@ -846,11 +1016,14 @@ void FileSelect_DrawNameEntry(GameState* thisx) {
                     gSPVertex(POLY_OPA_DISP++, &this->keyboardVtx[this->charIndex * 4], 4, 0);
 
                     FileSelect_DrawCharacter(this->state.gfxCtx,
-                                             font->fontBuf + gCharPageEng[this->charIndex] * FONT_CHAR_TEX_SIZE, 0);
+                                             font->fontBuf + FileSelect_GetEnglishKeyboardCharacter(this->charIndex) *
+                                                                 FONT_CHAR_TEX_SIZE,
+                                             0);
 
                     if (CHECK_BTN_ALL(input->press.button, BTN_A)) {
                         SFX_PLAY_CENTERED(NA_SE_SY_FSEL_DECIDE_S);
-                        this->fileNames[this->buttonIndex][this->newFileNameCharCount] = gCharPageEng[this->charIndex];
+                        this->fileNames[this->buttonIndex][this->newFileNameCharCount] =
+                            FileSelect_GetEnglishKeyboardCharacter(this->charIndex);
                         this->newFileNameCharCount++;
 
                         if (this->newFileNameCharCount > 7) {
@@ -959,6 +1132,93 @@ void FileSelect_StartNameEntry(GameState* thisx) {
     }
 }
 
+static void FileSelect_UpdateEnglishKeyboardCursor(FileSelectState* this) {
+    s16 rowLength;
+    s16 moved = false;
+
+    if (this->kbdY < 5) {
+        rowLength = sEnglishKeyboardRowLengths[this->kbdY];
+        if (this->kbdX >= rowLength) {
+            this->kbdX = rowLength - 1;
+        }
+
+        if (this->stickAdjX < -30) {
+            this->kbdX--;
+            if (this->kbdX < 0) {
+                this->kbdX = rowLength - 1;
+            }
+            moved = true;
+        } else if (this->stickAdjX > 30) {
+            this->kbdX++;
+            if (this->kbdX >= rowLength) {
+                this->kbdX = 0;
+            }
+            moved = true;
+        }
+
+        if (this->stickAdjY > 30) {
+            if (this->kbdY == 0) {
+                this->kbdY = 4;
+            } else {
+                this->kbdY--;
+            }
+
+            rowLength = sEnglishKeyboardRowLengths[this->kbdY];
+            if (this->kbdX >= rowLength) {
+                this->kbdX = rowLength - 1;
+            }
+            moved = true;
+        } else if (this->stickAdjY < -30) {
+            if (this->kbdY == 4) {
+                this->kbdY = 5;
+                this->kbdX += 3;
+            } else {
+                this->kbdY++;
+                rowLength = sEnglishKeyboardRowLengths[this->kbdY];
+                if (this->kbdX >= rowLength) {
+                    this->kbdX = rowLength - 1;
+                }
+            }
+            moved = true;
+        }
+
+    } else {
+        if (this->kbdX < FS_KBD_BTN_BACKSPACE || this->kbdX > FS_KBD_BTN_END) {
+            this->kbdX = FS_KBD_BTN_END;
+        }
+
+        if (this->stickAdjX < -30) {
+            this->kbdX = (this->kbdX == FS_KBD_BTN_BACKSPACE) ? FS_KBD_BTN_END : FS_KBD_BTN_BACKSPACE;
+            moved = true;
+        } else if (this->stickAdjX > 30) {
+            this->kbdX = (this->kbdX == FS_KBD_BTN_BACKSPACE) ? FS_KBD_BTN_END : FS_KBD_BTN_BACKSPACE;
+            moved = true;
+        }
+
+        if (this->stickAdjY > 30) {
+            this->kbdY = 4;
+            this->kbdX -= FS_KBD_BTN_BACKSPACE;
+            moved = true;
+        } else if (this->stickAdjY < -30) {
+            this->kbdY = 0;
+            this->kbdX = (this->kbdX == FS_KBD_BTN_BACKSPACE) ? 0 : 11;
+            moved = true;
+        }
+    }
+
+    if (this->kbdY == 5) {
+        this->kbdButton = this->kbdX;
+        this->charIndex = 52 + this->kbdX;
+    } else {
+        this->kbdButton = FS_KBD_BTN_NONE;
+        this->charIndex = this->kbdY * 13 + this->kbdX;
+    }
+
+    if (moved) {
+        SFX_PLAY_CENTERED(NA_SE_SY_FSEL_CURSOR);
+    }
+}
+
 /**
  * Update the keyboard cursor and play sound effects at the appropriate times.
  * There are many special cases for warping the cursor depending on where
@@ -971,6 +1231,18 @@ void FileSelect_UpdateKeyboardCursor(GameState* thisx) {
 #if !(PLATFORM_GC && OOT_PAL)
     Input* input = &this->state.input[0];
     s32 pad;
+#endif
+
+#if OOT_NTSC
+    if ((this->charPage == FS_CHAR_PAGE_ENG) && !CHECK_BTN_ALL(input->press.button, BTN_R)) {
+        FileSelect_UpdateEnglishKeyboardCursor(this);
+        return;
+    }
+#else
+    if (this->charPage == FS_CHAR_PAGE_ENG) {
+        FileSelect_UpdateEnglishKeyboardCursor(this);
+        return;
+    }
 #endif
 
 #if OOT_NTSC
@@ -1477,7 +1749,8 @@ typedef struct OptionsMenuTextureInfo {
     /* 0x12 */ u16 height;
 } OptionsMenuTextureInfo; // size = 0x14
 
-#define OPTIONS_MENU_TEXTURE_WIDTHS(jpn, eng, ger, fra) { eng, ger, fra }
+#define OPTIONS_MENU_TEXTURE_WIDTHS(jpn, eng, ger, fra) \
+    { eng, ger, fra }
 #define OPTIONS_MENU_TEXTURE_WIDTH(info) info.width[gSaveContext.language]
 #define OPTIONS_MENU_TEXTURE_HEIGHT(info) info.height
 
