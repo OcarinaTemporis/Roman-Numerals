@@ -271,8 +271,8 @@ static s16 sEnglishKeyboard[5][13] = {
     },
 };
 
-static s16 sEnglishKeyboardRowLengths[] = { 12, 12, 12, 12, 2 };
-static s16 sEnglishKeyboardRowStartX[] = { -0x58, -0x58, -0x58, -0x58, -0x08 };
+static s16 sEnglishKeyboardRowLengths[] = { 12, 12, 12, 12, 3 };
+static s16 sEnglishKeyboardRowStartX[] = { -0x58, -0x58, -0x58, -0x58, -0x10 };
 
 static s16 FileSelect_GetEnglishKeyboardCharacter(s16 charIndex) {
     return sEnglishKeyboard[charIndex / 13][charIndex % 13];
@@ -1171,7 +1171,7 @@ static void FileSelect_UpdateEnglishKeyboardCursor(FileSelectState* this) {
         } else if (this->stickAdjY < -30) {
             if (this->kbdY == 4) {
                 this->kbdY = 5;
-                this->kbdX += 3;
+                this->kbdX = (this->kbdX == 0) ? FS_KBD_BTN_BACKSPACE : FS_KBD_BTN_END;
             } else {
                 this->kbdY++;
                 rowLength = sEnglishKeyboardRowLengths[this->kbdY];
@@ -1197,7 +1197,7 @@ static void FileSelect_UpdateEnglishKeyboardCursor(FileSelectState* this) {
 
         if (this->stickAdjY > 30) {
             this->kbdY = 4;
-            this->kbdX -= FS_KBD_BTN_BACKSPACE;
+            this->kbdX = (this->kbdX == FS_KBD_BTN_BACKSPACE) ? 0 : 2;
             moved = true;
         } else if (this->stickAdjY < -30) {
             this->kbdY = 0;
