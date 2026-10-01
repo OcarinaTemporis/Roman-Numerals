@@ -89,8 +89,8 @@ void EnMag_Init(Actor* thisx, PlayState* play) {
     YREG(5) = 30;
     YREG(6) = 30;
     YREG(7) = 119;
-    YREG(8) = 7;
-    YREG(9) = 5;
+    YREG(8) = 6;
+    YREG(9) = 1;
     YREG(10) = 3;
 
     VREG(4) = 1;
@@ -557,17 +557,11 @@ void EnMag_DrawInner(Actor* thisx, PlayState* play, Gfx** gfxP) {
     // For iQue, the word "PRESS" is drawn below as a Chinese character instead (gTitlePressCHN)
     static u8 pressStartFontIndices[] = {
 #if !PLATFORM_IQUE
-        FILENAME_UPPERCASE('P'),
-        FILENAME_UPPERCASE('R'),
+        FILENAME_UPPERCASE('P'), FILENAME_UPPERCASE('R'), FILENAME_UPPERCASE('E'), FILENAME_UPPERCASE('M'),
         FILENAME_UPPERCASE('E'),
-        FILENAME_UPPERCASE('S'),
-        FILENAME_UPPERCASE('S'),
 #endif
-        FILENAME_UPPERCASE('S'),
-        FILENAME_UPPERCASE('T'),
-        FILENAME_UPPERCASE('A'),
-        FILENAME_UPPERCASE('R'),
-        FILENAME_UPPERCASE('T'),
+        FILENAME_UPPERCASE('I'), FILENAME_UPPERCASE('N'), FILENAME_UPPERCASE('C'), FILENAME_UPPERCASE('I'),
+        FILENAME_UPPERCASE('P'), FILENAME_UPPERCASE('E'), FILENAME_UPPERCASE('R'), FILENAME_UPPERCASE('E'),
     };
     static void* effectMaskTextures[] = {
         gTitleEffectMask00Tex, gTitleEffectMask01Tex, gTitleEffectMask02Tex,
@@ -814,7 +808,28 @@ void EnMag_DrawInner(Actor* thisx, PlayState* play, Gfx** gfxP) {
             EnMag_DrawCharTexture(&gfx, font->fontBuf + pressStartFontIndices[i] * FONT_CHAR_TEX_SIZE, rectLeft,
                                   YREG(10) + 172);
             rectLeft += YREG(8);
+            if (i == 0) {
+                rectLeft += YREG(9);
+            }
+            if (i == 2) {
+                rectLeft += YREG(9);
+            }
+            if (i == 3) {
+                rectLeft += YREG(9);
+            }
             if (i == 4) {
+                rectLeft += YREG(9);
+            }
+            if (i == 4) {
+                rectLeft += YREG(9);
+            }
+            if (i == 6) {
+                rectLeft += YREG(9);
+            }
+            if (i == 6) {
+                rectLeft += YREG(9);
+            }
+            if (i == 9) {
                 rectLeft += YREG(9);
             }
         }
@@ -828,7 +843,31 @@ void EnMag_DrawInner(Actor* thisx, PlayState* play, Gfx** gfxP) {
             EnMag_DrawCharTexture(&gfx, font->fontBuf + pressStartFontIndices[i] * FONT_CHAR_TEX_SIZE, rectLeft,
                                   YREG(10) + 171);
             rectLeft += YREG(8);
+            if (i == 0) {
+                rectLeft += YREG(9);
+            }
+            if (i == 1) {
+                rectLeft += YREG(9);
+            }
+            if (i == 2) {
+                rectLeft += YREG(9);
+            }
+            if (i == 3) {
+                rectLeft += YREG(9);
+            }
             if (i == 4) {
+                rectLeft += YREG(9);
+            }
+            if (i == 4) {
+                rectLeft += YREG(9);
+            }
+            if (i == 6) {
+                rectLeft += YREG(9);
+            }
+            if (i == 6) {
+                rectLeft += YREG(9);
+            }
+            if (i == 9) {
                 rectLeft += YREG(9);
             }
         }

@@ -117,7 +117,7 @@ void FileSelect_SetKeyboardVtx(GameState* thisx) {
     }
 #else
     for (phi_t2 = 0, phi_s2 = 0, phi_t3 = 0; phi_s2 < 5; phi_s2++) {
-        for (phi_t0 = -0x60, phi_t1 = 0; phi_t1 < 13; phi_t1++, phi_t3 += 4, phi_t2++) {
+        for (phi_t0 = -0x60, phi_t1 = 0; phi_t1 < 12; phi_t1++, phi_t3 += 4, phi_t2++) {
             //! @bug D_80812544 is accessed out of bounds when drawing the empty space character (value
             //! of 64). Under normal circumstances it reads a halfword from sNameLabelTextures.
             this->keyboardVtx[phi_t3].v.ob[0] = this->keyboardVtx[phi_t3 + 2].v.ob[0] = D_80812544[phi_t2] + phi_t0;
@@ -1477,8 +1477,7 @@ typedef struct OptionsMenuTextureInfo {
     /* 0x12 */ u16 height;
 } OptionsMenuTextureInfo; // size = 0x14
 
-#define OPTIONS_MENU_TEXTURE_WIDTHS(jpn, eng, ger, fra) \
-    { eng, ger, fra }
+#define OPTIONS_MENU_TEXTURE_WIDTHS(jpn, eng, ger, fra) { eng, ger, fra }
 #define OPTIONS_MENU_TEXTURE_WIDTH(info) info.width[gSaveContext.language]
 #define OPTIONS_MENU_TEXTURE_HEIGHT(info) info.height
 

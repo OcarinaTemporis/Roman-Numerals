@@ -1,6 +1,7 @@
 #include "file_select.h"
 #include "file_select_state.h"
 
+#include "array_count.h"
 #include "attributes.h"
 #include "controller.h"
 #include "gfx.h"
@@ -10,6 +11,7 @@
 #include "main.h"
 #include "map_select_state.h"
 #include "memory_utils.h"
+#include "roman_numerals.h"
 #if PLATFORM_N64
 #include "n64dd.h"
 #endif
@@ -39,6 +41,26 @@
 #endif
 #include "assets/textures/title_static/title_static.h"
 #include "assets/textures/parameter_static/parameter_static.h"
+#include "assets/textures/parameter_static/roman_numerals.h"
+
+static void* sDeathRomanGlyphTextures[ROMAN_NUMERAL_GLYPH_MAX] = {
+    gRupeeRomanITex, gRupeeRomanVTex, gRupeeRomanXTex, gRupeeRomanLTex,
+    gRupeeRomanCTex, gRupeeRomanDTex, gRupeeRomanMTex,
+};
+
+static s16 sDeathRomanGlyphAdvances[ROMAN_NUMERAL_GLYPH_MAX] = { 3, 7, 7, 6, 8, 8, 8 };
+static s16 sDeathRomanGlyphWidths[ROMAN_NUMERAL_GLYPH_MAX] = { 5, 12, 12, 5, 12, 12, 8 };
+static s16 sDeathRomanGlyphTextureWidths[ROMAN_NUMERAL_GLYPH_MAX] = { 8, 16, 16, 8, 16, 16, 8 };
+
+#define DEATH_COUNTER_MAX_ROMAN_GLYPHS 12
+#define DEATH_COUNTER_MAX_ROMAN_WIDTH 78
+
+static Gfx* FileSelect_QuadTextureI8(Gfx* gfx, void* texture, s16 width, s16 height, s16 point) {
+    gDPLoadTextureBlock(gfx++, texture, G_IM_FMT_I, G_IM_SIZ_8b, width, height, 0, G_TX_NOMIRROR | G_TX_WRAP,
+                        G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
+    gSP1Quadrangle(gfx++, point, point + 2, point + 3, point + 1, 0);
+    return gfx;
+}
 
 #if OOT_PAL_N64
 static s32 sInitialLanguageAlphaAsInt = 100;
@@ -851,10 +873,10 @@ void FileSelect_SetWindowVtx(GameState* thisx) {
 static s16 D_80812818[] = { 0x001A, 0x000A, 0x000A, 0x000A };
 static s16 D_80812820[] = { 0x0020, 0x000C, 0x000C, 0x000C };
 static s16 D_80812828[] = { 0x0010, 0x000C, 0x000C, 0x000C };
-static s16 D_80812830[] = { 0x0040, 0x0054, 0x0068, 0x0274, 0x0278, 0x027C };
-static s16 D_8081283C[] = { 0x0040, 0x0054, 0x0068, 0x0278 };
-static s16 D_80812844[] = { 0x0274, 0x0278 };
-static s16 D_80812848[] = { 0x0274, 0x0278 };
+static s16 D_80812830[] = { 0x004C, 0x0060, 0x0074, 0x0280, 0x0284, 0x0288 };
+static s16 D_8081283C[] = { 0x004C, 0x0060, 0x0074, 0x0284 };
+static s16 D_80812844[] = { 0x0280, 0x0284 };
+static s16 D_80812848[] = { 0x0280, 0x0284 };
 
 void FileSelect_SetWindowContentVtx(GameState* thisx) {
     FileSelectState* this = (FileSelectState*)thisx;
@@ -869,9 +891,9 @@ void FileSelect_SetWindowContentVtx(GameState* thisx) {
     u8 fileNameChar;
 #endif
 
-    this->windowContentVtx = GRAPH_ALLOC(this->state.gfxCtx, 0x288 * sizeof(Vtx));
+    this->windowContentVtx = GRAPH_ALLOC(this->state.gfxCtx, 0x294 * sizeof(Vtx));
 
-    for (phi_t2 = 0; phi_t2 < 0x288; phi_t2 += 4) {
+    for (phi_t2 = 0; phi_t2 < 0x294; phi_t2 += 4) {
         this->windowContentVtx[phi_t2].v.ob[0] = this->windowContentVtx[phi_t2 + 2].v.ob[0] = 0x12C;
         this->windowContentVtx[phi_t2 + 1].v.ob[0] = this->windowContentVtx[phi_t2 + 3].v.ob[0] =
             this->windowContentVtx[phi_t2].v.ob[0] + 0x10;
@@ -912,7 +934,7 @@ void FileSelect_SetWindowContentVtx(GameState* thisx) {
     for (phi_a1 = 0, phi_t2 = 4; phi_a1 < 3; phi_a1++) {
         phi_t0 = this->windowPosX - 6;
 
-        for (phi_t5 = 0; phi_t5 < 5; phi_t5++, phi_t2 += 4) {
+        for (phi_t5 = 0; phi_t5 < 6; phi_t5++, phi_t2 += 4) {
             this->windowContentVtx[phi_t2].v.ob[0] = this->windowContentVtx[phi_t2 + 2].v.ob[0] = phi_t0;
             this->windowContentVtx[phi_t2 + 1].v.ob[0] = this->windowContentVtx[phi_t2 + 3].v.ob[0] =
                 this->windowContentVtx[phi_t2].v.ob[0] + sFileInfoBoxPartWidths[phi_t5];
@@ -1035,7 +1057,7 @@ void FileSelect_SetWindowContentVtx(GameState* thisx) {
                     this->windowContentVtx[phi_t2].v.ob[1] - WREG(43);
             }
 
-            phi_t0 = this->windowPosX - 14;
+            phi_t0 = this->windowPosX - 44;
             temp_t1 -= 0x16;
 
             for (phi_a1 = 0; phi_a1 < 4; phi_a1++, phi_t2 += 4) {
@@ -1144,7 +1166,7 @@ void FileSelect_SetWindowContentVtx(GameState* thisx) {
     this->windowContentVtx[phi_t2 + 5].v.tc[0] = this->windowContentVtx[phi_t2 + 7].v.tc[0] = 0x1000;
 }
 
-static u16 D_8081284C[] = { 0x007C, 0x0124, 0x01CC };
+static u16 D_8081284C[] = { 0x0088, 0x0130, 0x01D8 };
 
 static void* sQuestItemTextures[] = {
     gFileSelKokiriEmeraldTex,   gFileSelGoronRubyTex,       gFileSelZoraSapphireTex,
@@ -1192,7 +1214,12 @@ void FileSelect_DrawFileInfo(GameState* thisx, s16 fileIndex, s16 isActive) {
 #endif
     s16 heartType;
     s16 vtxOffset;
-    s16 deathCountSplit[3];
+    u8 deathRomanGlyphs[ROMAN_NUMERAL_MAX_GLYPHS];
+    s16 deathRomanGlyphCount;
+    RomanNumeralGlyph deathRomanGlyph;
+    Vtx* deathRomanVtx;
+    s16 deathRomanGlyphX;
+    s16 deathRomanGlyphWidth;
 
     OPEN_DISPS(this->state.gfxCtx, "../z_file_choose.c", 1709);
 
@@ -1217,14 +1244,39 @@ void FileSelect_DrawFileInfo(GameState* thisx, s16 fileIndex, s16 isActive) {
         gDPSetCombineLERP(POLY_OPA_DISP++, 1, 0, PRIMITIVE, 0, TEXEL0, 0, PRIMITIVE, 0, 1, 0, PRIMITIVE, 0, TEXEL0, 0,
                           PRIMITIVE, 0);
         gDPSetPrimColor(POLY_OPA_DISP++, 0x00, 0x00, 255, 255, 255, this->fileInfoAlpha[fileIndex]);
-        gSPVertex(POLY_OPA_DISP++, &this->windowContentVtx[D_8081284C[fileIndex]] + 0x24, 12, 0);
+        deathRomanGlyphCount =
+            RomanNumerals_Format(this->deaths[fileIndex], deathRomanGlyphs, ARRAY_COUNT(deathRomanGlyphs));
+        if (deathRomanGlyphCount > DEATH_COUNTER_MAX_ROMAN_GLYPHS) {
+            deathRomanGlyphCount = DEATH_COUNTER_MAX_ROMAN_GLYPHS;
+        }
 
-        FileSelect_SplitNumber(this->deaths[fileIndex], &deathCountSplit[0], &deathCountSplit[1], &deathCountSplit[2]);
+        if (deathRomanGlyphCount != 0) {
+            deathRomanVtx = GRAPH_ALLOC(this->state.gfxCtx, DEATH_COUNTER_MAX_ROMAN_GLYPHS * 4 * sizeof(Vtx));
+            deathRomanGlyphWidth = sDeathRomanGlyphWidths[deathRomanGlyphs[deathRomanGlyphCount - 1]];
+            for (k = 0; k < deathRomanGlyphCount - 1; k++) {
+                deathRomanGlyphWidth += sDeathRomanGlyphAdvances[deathRomanGlyphs[k]];
+            }
+            deathRomanGlyphX = this->windowContentVtx[D_8081284C[fileIndex] + 0x24].v.ob[0] +
+                               DEATH_COUNTER_MAX_ROMAN_WIDTH - deathRomanGlyphWidth;
 
-        // draw death count
-        for (k = 0, vtxOffset = 0; k < 3; k++, vtxOffset += 4) {
-            FileSelect_DrawCharacter(this->state.gfxCtx, sp54->fontBuf + deathCountSplit[k] * FONT_CHAR_TEX_SIZE,
-                                     vtxOffset);
+            for (k = 0; k < deathRomanGlyphCount; k++) {
+                deathRomanGlyph = deathRomanGlyphs[k];
+                MemCopy(&deathRomanVtx[k * 4], &this->windowContentVtx[D_8081284C[fileIndex] + 0x24], 4 * sizeof(Vtx));
+                deathRomanVtx[k * 4].v.ob[0] = deathRomanVtx[k * 4 + 2].v.ob[0] = deathRomanGlyphX;
+                deathRomanVtx[k * 4 + 1].v.ob[0] = deathRomanVtx[k * 4 + 3].v.ob[0] =
+                    deathRomanGlyphX + sDeathRomanGlyphWidths[deathRomanGlyph];
+                deathRomanVtx[k * 4].v.tc[0] = deathRomanVtx[k * 4 + 2].v.tc[0] = 0;
+                deathRomanVtx[k * 4 + 1].v.tc[0] = deathRomanVtx[k * 4 + 3].v.tc[0] =
+                    sDeathRomanGlyphTextureWidths[deathRomanGlyph] << 5;
+                deathRomanGlyphX += sDeathRomanGlyphAdvances[deathRomanGlyph];
+            }
+
+            for (k = 0; k < deathRomanGlyphCount; k++) {
+                deathRomanGlyph = deathRomanGlyphs[k];
+                gSPVertex(POLY_OPA_DISP++, &deathRomanVtx[k * 4], 4, 0);
+                POLY_OPA_DISP = FileSelect_QuadTextureI8(POLY_OPA_DISP, sDeathRomanGlyphTextures[deathRomanGlyph],
+                                                         sDeathRomanGlyphTextureWidths[deathRomanGlyph], 16, 0);
+            }
         }
 
         gDPPipeSync(POLY_OPA_DISP++);
@@ -1407,13 +1459,13 @@ void FileSelect_DrawWindowContents(GameState* thisx) {
     gDPPipeSync(POLY_OPA_DISP++);
 
     // draw file info box (large box when a file is selected)
-    for (fileIndex = 0; fileIndex < 3; fileIndex++, temp += 20) {
+    for (fileIndex = 0; fileIndex < 3; fileIndex++, temp += 24) {
         gDPPipeSync(POLY_OPA_DISP++);
         gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, this->windowColor[0], this->windowColor[1], this->windowColor[2],
                         this->fileInfoAlpha[fileIndex]);
-        gSPVertex(POLY_OPA_DISP++, &this->windowContentVtx[temp], 20, 0);
+        gSPVertex(POLY_OPA_DISP++, &this->windowContentVtx[temp], 24, 0);
 
-        for (quadVtxIndex = 0, i = 0; i < 5; i++, quadVtxIndex += 4) {
+        for (quadVtxIndex = 0, i = 0; i < 6; i++, quadVtxIndex += 4) {
             gDPLoadTextureBlock(POLY_OPA_DISP++, sFileInfoBoxTextures[i], G_IM_FMT_IA, G_IM_SIZ_16b,
                                 sFileInfoBoxPartWidths[i], 56, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP,
                                 G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
@@ -1475,7 +1527,7 @@ void FileSelect_DrawWindowContents(GameState* thisx) {
     gDPSetCombineLERP(POLY_OPA_DISP++, PRIMITIVE, ENVIRONMENT, TEXEL0, ENVIRONMENT, TEXEL0, 0, PRIMITIVE, 0, PRIMITIVE,
                       ENVIRONMENT, TEXEL0, ENVIRONMENT, TEXEL0, 0, PRIMITIVE, 0);
     gDPSetEnvColor(POLY_OPA_DISP++, 0, 0, 0, 0);
-    gSPVertex(POLY_OPA_DISP++, &this->windowContentVtx[0x274], 20, 0);
+    gSPVertex(POLY_OPA_DISP++, &this->windowContentVtx[0x280], 20, 0);
 
     // draw primary action buttons (copy/erase)
     for (quadVtxIndex = 0, i = 0; i < 2; i++, quadVtxIndex += 4) {
