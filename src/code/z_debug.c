@@ -344,14 +344,14 @@ void Debug_DrawText(GraphicsContext* gfxCtx) {
         Regs_DrawEditor(&printer);
     }
 #endif
-    // Draw Zelda time with GfxPrint
-    dayTimeMinutes = (u32)gSaveContext.save.dayTime * 1440 / 0x10000;
-    dayTimeHours = dayTimeMinutes / 60;
-    dayTimeMinutesRemainder = dayTimeMinutes % 60;
+    // Show time
+    // dayTimeMinutes = (u32)gSaveContext.save.dayTime * 1440 / 0x10000;
+    // dayTimeHours = dayTimeMinutes / 60;
+    //  dayTimeMinutesRemainder = dayTimeMinutes % 60;
 
-    GfxPrint_SetColor(&printer, 255, 255, 255, 255);
-    GfxPrint_SetPos(&printer, 1, 1);
-    GfxPrint_Printf(&printer, "%02d:%02d", dayTimeHours, dayTimeMinutesRemainder);
+    //  GfxPrint_SetColor(&printer, 255, 255, 255, 255);
+    //  GfxPrint_SetPos(&printer, 1, 1);
+    //  GfxPrint_Printf(&printer, "%02d:%02d", dayTimeHours, dayTimeMinutesRemainder);
     //{
     //   char romanRupees[16];
 

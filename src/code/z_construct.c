@@ -271,29 +271,29 @@ void Regs_InitDataImpl(void) {
 
 #if OOT_NTSC
     R_PAUSE_INFO_PANEL_ICON_C_ITEM_X(LANGUAGE_JPN) = -45;
-    R_PAUSE_INFO_PANEL_ICON_C_ITEM_X(LANGUAGE_ENG) = -48;
+    R_PAUSE_INFO_PANEL_ICON_C_ITEM_X(LANGUAGE_ENG) = -62; // C Buttons + to Equip
     R_PAUSE_INFO_PANEL_TEXT_X(LANGUAGE_JPN) = 16;
-    R_PAUSE_INFO_PANEL_TEXT_X(LANGUAGE_ENG) = 22;
+    R_PAUSE_INFO_PANEL_TEXT_X(LANGUAGE_ENG) = 21; // to Equip on Arma
     R_PAUSE_INFO_PANEL_ICON_PLAY_SONG_X(LANGUAGE_JPN) = -55;
     R_PAUSE_INFO_PANEL_ICON_PLAY_SONG_X(LANGUAGE_ENG) = -53;
     R_PAUSE_INFO_PANEL_TEXT_C_ITEM_X(LANGUAGE_JPN) = 43;
-    R_PAUSE_INFO_PANEL_TEXT_C_ITEM_X(LANGUAGE_ENG) = 47;
+    R_PAUSE_INFO_PANEL_TEXT_C_ITEM_X(LANGUAGE_ENG) = 45; // to Equip
     R_PAUSE_INFO_PANEL_ICON_SAVE_PROMPT_X(LANGUAGE_JPN) = -33;
     R_PAUSE_INFO_PANEL_ICON_SAVE_PROMPT_X(LANGUAGE_ENG) = -42;
-    R_PAUSE_INFO_PANEL_ICON_EQUIP_X(LANGUAGE_JPN) = -33;
-    R_PAUSE_INFO_PANEL_ICON_EQUIP_X(LANGUAGE_ENG) = -37;
+    R_PAUSE_INFO_PANEL_ICON_EQUIP_X(LANGUAGE_JPN) = -48;
+    R_PAUSE_INFO_PANEL_ICON_EQUIP_X(LANGUAGE_ENG) = -51; // A Button on Arma
 #else
     // Same as above, although these regs are now unused for PAL versions
-    YREG(48) = -45;
-    YREG(49) = -48;
-    YREG(50) = 16;
-    YREG(51) = 22;
-    YREG(52) = -55;
-    YREG(53) = -53;
-    YREG(54) = 43;
-    YREG(55) = 47;
-    YREG(56) = -33;
-    YREG(57) = -42;
+    YREG(48) = -45; // seems to do nothing
+    YREG(49) = -48; // seems to do nothing
+    YREG(50) = 16;  // nothing
+    YREG(51) = 22;  // nothing
+    YREG(52) = -55; // nothing
+    YREG(53) = -53; // nothing
+    YREG(54) = 43;  // nothing
+    YREG(55) = 47;  // nothing
+    YREG(56) = -33; // nothing
+    YREG(57) = -42; // nothing
     YREG(58) = -33;
     YREG(59) = -37;
 #endif
@@ -701,7 +701,7 @@ void Regs_InitDataImpl(void) {
     VREG(84) = 0;
     VREG(85) = 50;
     VREG(86) = 0;
-    VREG(87) = 64;
+    VREG(87) = 74;
     VREG(88) = 66;
     VREG(89) = 0;
     R_GAME_OVER_RUMBLE_STRENGTH = 126;

@@ -88,7 +88,7 @@ void EnMag_Init(Actor* thisx, PlayState* play) {
     YREG(4) = 255;
     YREG(5) = 30;
     YREG(6) = 30;
-    YREG(7) = 119;
+    YREG(7) = 115;
     YREG(8) = 6;
     YREG(9) = 1;
     YREG(10) = 3;
@@ -832,6 +832,9 @@ void EnMag_DrawInner(Actor* thisx, PlayState* play, Gfx** gfxP) {
             if (i == 9) {
                 rectLeft += YREG(9);
             }
+            if (i == 11) {
+                rectLeft += YREG(9);
+            }
         }
 
         // Actual Text
@@ -868,6 +871,9 @@ void EnMag_DrawInner(Actor* thisx, PlayState* play, Gfx** gfxP) {
                 rectLeft += YREG(9);
             }
             if (i == 9) {
+                rectLeft += YREG(9);
+            }
+            if (i == 11) {
                 rectLeft += YREG(9);
             }
         }

@@ -34,8 +34,9 @@ extern u64 gPauseShadowTitleENGTex[TEX_LEN(u64, gPauseShadowTitleENGTex_WIDTH, g
 extern u64 gPauseBotWTitleENGTex[TEX_LEN(u64, gPauseBotWTitleENGTex_WIDTH, gPauseBotWTitleENGTex_HEIGHT, 8)];
 #define gPauseIceCavernTitleENGTex_WIDTH 96
 #define gPauseIceCavernTitleENGTex_HEIGHT 16
-extern u64 gPauseIceCavernTitleENGTex[TEX_LEN(u64, gPauseIceCavernTitleENGTex_WIDTH, gPauseIceCavernTitleENGTex_HEIGHT, 8)];
-#define gPauseToEquipENGTex_WIDTH 56
+extern u64
+    gPauseIceCavernTitleENGTex[TEX_LEN(u64, gPauseIceCavernTitleENGTex_WIDTH, gPauseIceCavernTitleENGTex_HEIGHT, 8)];
+#define gPauseToEquipENGTex_WIDTH 80
 #define gPauseToEquipENGTex_HEIGHT 16
 extern u64 gPauseToEquipENGTex[TEX_LEN(u64, gPauseToEquipENGTex_WIDTH, gPauseToEquipENGTex_HEIGHT, 8)];
 #define gPauseToDecideENGTex_WIDTH 64
@@ -55,7 +56,8 @@ extern u64 gPauseToEquipmentENGTex[TEX_LEN(u64, TO_PAGE_LABEL_TEX_WIDTH, TO_PAGE
 extern u64 gPauseSavePromptENGTex[TEX_LEN(u64, gPauseSavePromptENGTex_WIDTH, gPauseSavePromptENGTex_HEIGHT, 8)];
 #define gPauseSaveConfirmationENGTex_WIDTH 152
 #define gPauseSaveConfirmationENGTex_HEIGHT 16
-extern u64 gPauseSaveConfirmationENGTex[TEX_LEN(u64, gPauseSaveConfirmationENGTex_WIDTH, gPauseSaveConfirmationENGTex_HEIGHT, 8)];
+extern u64 gPauseSaveConfirmationENGTex[TEX_LEN(u64, gPauseSaveConfirmationENGTex_WIDTH,
+                                                gPauseSaveConfirmationENGTex_HEIGHT, 8)];
 #define gPauseYesENGTex_WIDTH 48
 #define gPauseYesENGTex_HEIGHT 16
 extern u64 gPauseYesENGTex[TEX_LEN(u64, gPauseYesENGTex_WIDTH, gPauseYesENGTex_HEIGHT, 8)];
@@ -64,7 +66,8 @@ extern u64 gPauseYesENGTex[TEX_LEN(u64, gPauseYesENGTex_WIDTH, gPauseYesENGTex_H
 extern u64 gPauseNoENGTex[TEX_LEN(u64, gPauseNoENGTex_WIDTH, gPauseNoENGTex_HEIGHT, 8)];
 #define gPauseCurrentPositionENGTex_WIDTH 64
 #define gPauseCurrentPositionENGTex_HEIGHT 8
-extern u64 gPauseCurrentPositionENGTex[TEX_LEN(u64, gPauseCurrentPositionENGTex_WIDTH, gPauseCurrentPositionENGTex_HEIGHT, 4)];
+extern u64
+    gPauseCurrentPositionENGTex[TEX_LEN(u64, gPauseCurrentPositionENGTex_WIDTH, gPauseCurrentPositionENGTex_HEIGHT, 4)];
 
 extern u64 gPauseEquipment10ENGTex[TEX_LEN(u64, PAGE_BG_QUAD_TEX_WIDTH, PAGE_BG_QUAD_TEX_HEIGHT, 8)];
 extern u64 gPauseSelectItem00ENGTex[TEX_LEN(u64, PAGE_BG_QUAD_TEX_WIDTH, PAGE_BG_QUAD_TEX_HEIGHT, 8)];
